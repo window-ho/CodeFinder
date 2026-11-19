@@ -7,17 +7,17 @@
   <title>CodeFinder</title>
   <style>
     :root {
-      --bg: #f4f6f3;
-      --card: #ffffff;
-      --ink: #182019;
-      --muted: #58655a;
-      --line: #d6dfd7;
-      --primary: #1b5e20;
-      --primary-soft: #e8f5e9;
-      --accent: #b26a00;
-      --accent-soft: #fff4e0;
-      --warn-bg: #fff8e6;
-      --warn-line: #f0c36d;
+      --bg: #f3f6f4;
+      --surface: #ffffff;
+      --ink: #17211b;
+      --muted: #526358;
+      --line: #d5dfd8;
+      --brand: #1b5e20;
+      --brand-2: #2e7d32;
+      --brand-bg: #e8f5e9;
+      --warn: #8a4b00;
+      --warn-bg: #fff6e5;
+      --warn-line: #f2c572;
       --hi: #fff176;
     }
 
@@ -40,55 +40,53 @@
 
     body {
       margin: 0;
-      padding: 16px 14px 36px;
+      padding: 18px 14px 40px;
       font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.5;
       font-size: 16px;
+      line-height: 1.5;
     }
 
-    .wrap {
-      max-width: 780px;
+    .container {
+      max-width: 820px;
       margin: 0 auto;
     }
 
-    .topbar {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px 18px;
+    .header-box {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff;
+      border-radius: 18px;
+      padding: 20px;
       margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 14px rgba(27, 94, 32, 0.16);
     }
 
-    .brand-row {
+    .header-top {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
       flex-wrap: wrap;
+      margin-bottom: 14px;
     }
 
-    .brand-title {
+    .app-title {
       margin: 0;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      color: var(--primary);
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
     }
 
-    .sub-pill {
-      background: var(--primary-soft);
-      color: var(--primary);
+    .header-badge {
+      background: rgba(255, 255, 255, 0.18);
+      padding: 6px 12px;
+      border-radius: 999px;
       font-size: 13px;
       font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 999px;
     }
 
-    .search-box {
+    .search-row {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
@@ -96,29 +94,23 @@
 
     .search-input {
       flex: 1 1 240px;
-      height: 50px;
-      padding: 0 14px;
-      font-size: 17px;
-      border: 2px solid var(--line);
+      height: 52px;
+      padding: 0 16px;
+      font-size: 18px;
+      border: none;
       border-radius: 12px;
       background: #fff;
       color: var(--ink);
       outline: none;
     }
 
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
     .btn {
-      height: 50px;
+      height: 52px;
       padding: 0 16px;
-      border: 1px solid var(--line);
       border-radius: 12px;
-      background: #fff;
-      color: var(--ink);
+      border: none;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -126,86 +118,59 @@
       gap: 6px;
     }
 
-    .btn:active {
-      transform: scale(0.99);
+    .btn-search {
+      background: #ffd54f;
+      color: #1f291f;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      border-color: var(--primary);
+    .btn-clear {
+      background: rgba(255, 255, 255, 0.2);
       color: #fff;
     }
 
-    .btn-accent {
-      background: var(--accent-soft);
-      border-color: #e6b86a;
-      color: var(--accent);
+    .btn-purpose {
+      height: auto;
+      min-height: 46px;
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--warn);
+      border: 2px solid var(--warn-line);
+      text-align: left;
     }
 
-    .disclaimer-box {
-      background: var(--warn-bg);
-      border: 1px solid var(--warn-line);
-      color: #5c4008;
-      border-radius: 12px;
-      padding: 10px 13px;
+    .btn-save {
+      height: 44px;
+      padding: 0 14px;
+      background: var(--brand);
+      color: #fff;
       font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 10px;
     }
 
-    .card {
-      background: var(--card);
+    .status-bar {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      min-height: 20px;
+      color: #fffde7;
+    }
+
+    .panel {
+      background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 16px 18px;
+      padding: 18px;
       margin-bottom: 14px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
-    .card-title {
-      margin: 0 0 10px;
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--ink);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .chip {
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #f9fbf9;
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .chip.multi {
-      background: var(--accent-soft);
-      border-color: #e6b86a;
-      color: var(--accent);
-    }
-
-    .chip.saved {
-      background: var(--primary-soft);
-      border-color: #9ccc9f;
-      color: var(--primary);
-    }
-
-    .result-hero {
-      border: 2px solid var(--primary);
+    .hero-panel {
+      border: 2px solid var(--brand);
       background: #f8fcf8;
     }
 
-    .code-badge {
+    .code-pill {
       display: inline-block;
-      background: var(--primary);
+      background: var(--brand);
       color: #fff;
       font-size: 20px;
       font-weight: 800;
@@ -214,19 +179,19 @@
       margin-bottom: 8px;
     }
 
-    .result-name {
+    .hero-title {
       margin: 4px 0 6px;
       font-size: 22px;
       font-weight: 800;
     }
 
-    .result-desc {
+    .hero-desc {
       margin: 0 0 12px;
       color: var(--muted);
       font-size: 15px;
     }
 
-    .purpose-box {
+    .purpose-card {
       background: var(--warn-bg);
       border: 2px solid var(--warn-line);
       border-radius: 14px;
@@ -234,78 +199,120 @@
       margin-top: 10px;
     }
 
-    .purpose-title {
+    .purpose-q {
+      margin: 0 0 10px;
       font-size: 16px;
       font-weight: 800;
-      color: #6d4700;
-      margin: 0 0 10px;
+      color: var(--warn);
     }
 
-    .purpose-actions {
+    .purpose-btns {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 10px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
+    .disclaimer-notice {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-line);
+      color: var(--warn);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
       margin-bottom: 12px;
-      flex-wrap: wrap;
     }
 
-    .tab {
-      padding: 8px 14px;
-      border-radius: 10px;
+    .panel-heading {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      padding: 9px 13px;
+      border-radius: 999px;
       border: 1px solid var(--line);
-      background: #fff;
-      font-weight: 700;
+      background: #f6f9f7;
+      color: var(--ink);
       font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
     }
 
-    .tab.active {
-      background: var(--primary);
-      border-color: var(--primary);
+    .chip-btn.multi-chip {
+      background: var(--warn-bg);
+      border-color: var(--warn-line);
+      color: var(--warn);
+    }
+
+    .chip-btn.saved-chip {
+      background: var(--brand-bg);
+      border-color: #a5d6a7;
+      color: var(--brand);
+    }
+
+    .cat-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .cat-tab {
+      padding: 9px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .cat-tab.active {
+      background: var(--brand);
+      border-color: var(--brand);
       color: #fff;
     }
 
-    .item-row {
+    .list-item {
       border-top: 1px solid var(--line);
-      padding: 12px 2px;
+      padding: 12px 4px;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
       gap: 12px;
+      align-items: flex-start;
     }
 
-    .item-row:first-child {
+    .list-item:first-child {
       border-top: none;
     }
 
-    .item-code {
+    .list-code {
       min-width: 54px;
       text-align: center;
-      font-weight: 800;
+      background: var(--brand-bg);
+      color: var(--brand);
       font-size: 16px;
-      padding: 4px 8px;
+      font-weight: 800;
+      padding: 5px 8px;
       border-radius: 8px;
-      background: var(--primary-soft);
-      color: var(--primary);
     }
 
-    .item-body {
-      flex: 1;
-    }
-
-    .item-head {
+    .list-title {
       font-weight: 800;
       font-size: 16px;
       margin-bottom: 2px;
     }
 
-    .item-sub {
+    .list-sub {
       font-size: 14px;
       color: var(--muted);
     }
@@ -317,79 +324,70 @@
       border-radius: 3px;
     }
 
-    .status-msg {
-      margin-top: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .footer {
+    .bottom-copyright {
       text-align: center;
       color: var(--muted);
       font-size: 13px;
       font-weight: 700;
-      margin-top: 24px;
+      margin-top: 26px;
       padding-top: 14px;
       border-top: 1px solid var(--line);
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand-row">
-        <h1 class="brand-title">CodeFinder</h1>
-        <span class="sub-pill">품목 · 상표 · 용도 자동 판별</span>
+  <div class="container">
+    <header class="header-box">
+      <div class="header-top">
+        <h1 class="app-title">CodeFinder</h1>
+        <span class="header-badge">품목 · 상표 · 용도 자동 검색</span>
       </div>
-      <div class="search-box">
+      <div class="search-row">
         <input
           id="searchInput"
           class="search-input"
           type="text"
-          placeholder="품목명이나 상표명을 입력하세요 (예: 요소, 인비, 톤백, 멀칭비닐)"
+          placeholder="품목명이나 상표명 입력 (예: 요소, 인비, 톤백, 멀칭비닐)"
           autocomplete="off"
         />
-        <button id="lookupBtn" class="btn btn-primary" type="button">🌐 인터넷·AI 판별</button>
-        <button id="clearBtn" class="btn" type="button">지우기</button>
+        <button id="lookupBtn" class="btn btn-search" type="button">🌐 인터넷·AI 판별</button>
+        <button id="clearBtn" class="btn btn-clear" type="button">지우기</button>
       </div>
-      <div id="statusMsg" class="status-msg"></div>
-    </div>
+      <div id="statusBar" class="status-bar"></div>
+    </header>
 
-    <div id="topResultCard" class="card result-hero" style="display:none;"></div>
+    <section id="heroPanel" class="panel hero-panel" style="display:none;"></section>
 
-    <div class="card">
-      <div class="disclaimer-box">
+    <section class="panel">
+      <div class="disclaimer-notice">
         ⚠️ 본 검색 및 판별 결과는 참고용이며, 실제 장부 기입 및 최종 분류 판단과 책임은 사용자 본인에게 있습니다.
       </div>
-      <h2 class="card-title">자주 찾는 상표명 · 용도구분</h2>
-      <div id="quickChips" class="chips"></div>
-    </div>
+      <h2 class="panel-heading">자주 찾는 상표명 · 용도구분</h2>
+      <div id="quickChips" class="chip-group"></div>
+    </section>
 
-    <div id="notebookCard" class="card" style="display:none;">
-      <h2 class="card-title">📒 내 제품 수첩</h2>
-      <div id="notebookChips" class="chips"></div>
-    </div>
+    <section id="notebookPanel" class="panel" style="display:none;">
+      <h2 class="panel-heading">📒 내 제품 수첩</h2>
+      <div id="notebookChips" class="chip-group"></div>
+    </section>
 
-    <div class="card">
-      <div class="tabs">
-        <button class="tab active" data-cat="전체" type="button">전체</button>
-        <button class="tab" data-cat="재료비" type="button">재료비</button>
-        <button class="tab" data-cat="노무비" type="button">노무비</button>
-        <button class="tab" data-cat="경비" type="button">경비</button>
+    <section class="panel">
+      <div class="cat-tabs">
+        <button class="cat-tab active" data-cat="전체" type="button">전체</button>
+        <button class="cat-tab" data-cat="재료비" type="button">재료비</button>
+        <button class="cat-tab" data-cat="노무비" type="button">노무비</button>
+        <button class="cat-tab" data-cat="경비" type="button">경비</button>
       </div>
       <div id="codeList"></div>
-    </div>
+    </section>
 
-    <footer class="footer">
-      © windowho@korea.kr
-    </footer>
+    <footer class="bottom-copyright">© windowho@korea.kr</footer>
   </div>
 
   <script>
-    const STORAGE_KEY = "codefinder_saved_items_v1";
+    const NOTEBOOK_KEY = "codefinder_notebook_v1";
 
-    const CATEGORIES = [
+    const EXPENSE_ITEMS = [
       { code: "101", cat: "재료비", name: "종자종묘비", unit: "kg, 주, 등", desc: "구입한 종자와 묘(관상수 모목 포함)", keywords: ["씨앗", "종자", "모종", "묘목", "종구", "파종"] },
       { code: "102", cat: "재료비", name: "비료비", unit: "kg", desc: "퇴비, 녹비, 계분 등 유기질비료 및 질소·인산·칼리·영양제·석회고토 등 무기질비료", keywords: ["비료", "퇴비", "거름", "계분", "우분", "유기질", "복합비료", "영양제", "석회", "고토", "질소", "인산", "칼리"] },
       { code: "103", cat: "재료비", name: "농약비", unit: "kg, ㎖", desc: "살충제, 살균제, 제초제, 전착제, 발근제, 종자소독제, 생장조정제 등", keywords: ["농약", "제초제", "풀약", "살충제", "살균제", "전착제", "발근제", "소독제", "생장조정제", "방제"] },
@@ -411,7 +409,7 @@
       { code: "132", cat: "경비", name: "판매자재", unit: "-", desc: "부대, 박스 등 포장자재 및 기타 출하·판매용 자재", keywords: ["포장재", "박스", "상자", "부대", "출하용", "판매용", "테이프", "라벨"] }
     ];
 
-    const BRAND_DICT = [
+    const BRANDS = [
       { term: "요소", code: "102", reason: "질소 성분의 대표적인 무기질 비료입니다." },
       { term: "인비", code: "102", reason: "용성인비·과인산석회 등 인산 계열 무기질 비료입니다." },
       { term: "유안", code: "102", reason: "황산암모늄 계열 질소 비료입니다." },
@@ -423,7 +421,7 @@
       { term: "곤포사일리지", code: "105", reason: "가축에게 먹이는 조사료·사료용 자재입니다." }
     ];
 
-    const MULTI_PURPOSE_ITEMS = [
+    const MULTI_ITEMS = [
       {
         term: "톤백",
         question: "톤백을 어느 용도로 사용하셨나요?",
@@ -474,79 +472,77 @@
       }
     ];
 
-    let currentCategory = "전체";
-    let selectedOverrideCode = null;
-    let selectedPurposeLabel = null;
+    let activeCat = "전체";
+    let overrideCode = null;
+    let overridePurpose = "";
 
-    function highlightText(text, query) {
-      if (!query) return text;
-      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return text.replace(new RegExp(`(${escaped})`, "gi"), "<mark>$1</mark>");
+    function highlight(text, q) {
+      if (!q) return text;
+      const esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return text.replace(new RegExp(`(${esc})`, "gi"), "<mark>$1</mark>");
     }
 
-    function getSavedItems() {
+    function setStatus(msg) {
+      document.getElementById("statusBar").textContent = msg;
+    }
+
+    function loadNotebook() {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return JSON.parse(localStorage.getItem(NOTEBOOK_KEY) || "[]");
       } catch (e) {
         return [];
       }
     }
 
-    function saveItemToNotebook(name, code, purposeText) {
-      const displayLabel = purposeText ? `${name} (${purposeText})` : name;
-      const items = getSavedItems();
-      const filtered = items.filter((it) => it.label !== displayLabel);
-      filtered.unshift({ label: displayLabel, code, rawName: name, purposeText: purposeText || "" });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered.slice(0, 30)));
+    function saveNotebookItem(name, code, purposeText) {
+      const label = purposeText ? `${name} (${purposeText})` : name;
+      const list = loadNotebook().filter((x) => x.label !== label);
+      list.unshift({ label, code, rawName: name, purposeText: purposeText || "" });
+      localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(list.slice(0, 30)));
       renderNotebook();
-      setStatus(`'${displayLabel}' (부호 ${code}) 내 제품 수첩에 저장됨`);
+      setStatus(`'${label}' (부호 ${code}) 내 제품 수첩에 저장됨`);
     }
 
-    function setStatus(msg) {
-      document.getElementById("statusMsg").textContent = msg;
+    function matchMulti(q) {
+      const s = q.trim().toLowerCase();
+      if (!s) return null;
+      return MULTI_ITEMS.find((m) => s.includes(m.term.toLowerCase()) || m.term.toLowerCase().includes(s));
     }
 
-    function findMultiPurpose(q) {
-      const clean = q.trim().toLowerCase();
-      if (!clean) return null;
-      return MULTI_PURPOSE_ITEMS.find((m) => clean.includes(m.term.toLowerCase()) || m.term.toLowerCase().includes(clean));
+    function matchBrand(q) {
+      const s = q.trim().toLowerCase();
+      if (!s) return null;
+      return BRANDS.find((b) => s.includes(b.term.toLowerCase()) || b.term.toLowerCase().includes(s));
     }
 
-    function findBrand(q) {
-      const clean = q.trim().toLowerCase();
-      if (!clean) return null;
-      return BRAND_DICT.find((b) => clean.includes(b.term.toLowerCase()) || b.term.toLowerCase().includes(clean));
+    function matchSaved(q) {
+      const s = q.trim().toLowerCase();
+      if (!s) return null;
+      return loadNotebook().find((x) => x.label.toLowerCase().includes(s) || x.rawName.toLowerCase().includes(s));
     }
 
-    function findSavedMatch(q) {
-      const clean = q.trim().toLowerCase();
-      if (!clean) return null;
-      return getSavedItems().find((s) => s.label.toLowerCase().includes(clean) || s.rawName.toLowerCase().includes(clean));
-    }
-
-    function findBestCategory(q) {
-      const clean = q.trim().toLowerCase();
-      if (!clean) return null;
-
-      for (const item of CATEGORIES) {
-        if (item.code === clean || item.name.toLowerCase().includes(clean)) {
-          return { item, reason: `${item.name} 항목과 직접 일치합니다.` };
+    function matchCategory(q) {
+      const s = q.trim().toLowerCase();
+      if (!s) return null;
+      for (const item of EXPENSE_ITEMS) {
+        if (item.code === s || item.name.toLowerCase().includes(s)) {
+          return { item, reason: `${item.name} 항목과 일치합니다.` };
         }
       }
-      for (const item of CATEGORIES) {
-        if (item.keywords.some((k) => k.toLowerCase().includes(clean) || clean.includes(k.toLowerCase()))) {
-          return { item, reason: `입력하신 단어와 '${item.name}' 관련 키워드가 연결되었습니다.` };
+      for (const item of EXPENSE_ITEMS) {
+        if (item.keywords.some((k) => k.toLowerCase().includes(s) || s.includes(k.toLowerCase()))) {
+          return { item, reason: `'${item.name}' 관련 키워드와 연결되었습니다.` };
         }
       }
-      for (const item of CATEGORIES) {
-        if (item.desc.toLowerCase().includes(clean)) {
+      for (const item of EXPENSE_ITEMS) {
+        if (item.desc.toLowerCase().includes(s)) {
           return { item, reason: `항목 설명에 '${q}' 내용이 포함되어 있습니다.` };
         }
       }
       return null;
     }
 
-    function inferOnlineHeuristic(q) {
+    function guessByText(q) {
       const s = q.toLowerCase();
       if (/요소|인비|유안|복합|질소|인산|칼리|퇴비|비료|영양제|아미노산|부식산|규산|고토/.test(s)) {
         return { code: "102", reason: "비료·영양제·토양개량 자재 계열로 추정됩니다." };
@@ -560,206 +556,184 @@
       if (/박스|상자|포장|봉투|마대|테이프|라벨|출하|판매/.test(s)) {
         return { code: "132", reason: "출하·포장용 판매자재 계열로 추정됩니다." };
       }
-      if (/비닐|멀칭|톤백|노끈|지주|상토|호스|망|끈/.test(s)) {
-        return { code: "109", reason: "현장 자재(109 기타)로 우선 분류되며, 사용처에 따라 부호가 달라질 수 있습니다." };
-      }
-      return { code: "109", reason: "일상·신제품 명칭으로 우선 기타(109)로 분류했습니다. 실제 용도를 꼭 확인해 주세요." };
+      return { code: "109", reason: "현장 자재(109 기타)로 우선 분류했습니다. 실제 사용처를 확인해 주세요." };
     }
 
-    function renderTopResult() {
-      const rawQuery = document.getElementById("searchInput").value.trim();
-      const hero = document.getElementById("topResultCard");
+    function renderHero() {
+      const q = document.getElementById("searchInput").value.trim();
+      const panel = document.getElementById("heroPanel");
 
-      if (!rawQuery && !selectedOverrideCode) {
-        hero.style.display = "none";
-        hero.innerHTML = "";
+      if (!q && !overrideCode) {
+        panel.style.display = "none";
+        panel.innerHTML = "";
         return;
       }
 
-      const multi = findMultiPurpose(rawQuery);
-      const savedMatch = findSavedMatch(rawQuery);
-      const brandMatch = findBrand(rawQuery);
-      const catMatch = findBestCategory(rawQuery);
+      const multi = matchMulti(q);
+      const saved = matchSaved(q);
+      const brand = matchBrand(q);
+      const cat = matchCategory(q);
 
-      let activeCode = selectedOverrideCode;
-      let titleText = rawQuery || "선택된 품목";
-      let reasonText = "";
-      let showPurposeSelector = false;
-      let purposeOptions = [];
+      let code = overrideCode;
+      let heading = q || "선택 항목";
+      let reason = "";
 
       if (multi) {
-        showPurposeSelector = true;
-        purposeOptions = multi.options;
-        if (!activeCode) {
-          activeCode = multi.options[0].code;
-          reasonText = `${multi.question} 아래 버튼을 눌러 용도를 확정해 주세요.`;
-        } else {
-          reasonText = `선택하신 용도(${selectedPurposeLabel || ""}) 기준으로 반영되었습니다.`;
-        }
-      } else if (savedMatch) {
-        activeCode = activeCode || savedMatch.code;
-        titleText = savedMatch.label;
-        reasonText = `내 제품 수첩에 저장된 항목입니다.`;
-      } else if (brandMatch) {
-        activeCode = activeCode || brandMatch.code;
-        titleText = `${rawQuery} (${brandMatch.term})`;
-        reasonText = brandMatch.reason;
-      } else if (catMatch) {
-        activeCode = activeCode || catMatch.item.code;
-        titleText = `${rawQuery} → ${catMatch.item.name}`;
-        reasonText = catMatch.reason;
-      } else if (activeCode) {
-        reasonText = "직접 선택하거나 판별된 부호입니다.";
+        code = code || multi.options[0].code;
+        reason = overridePurpose
+          ? `선택하신 용도(${overridePurpose}) 기준으로 반영되었습니다.`
+          : `${multi.question} 아래 버튼을 눌러 용도를 확정해 주세요.`;
+      } else if (saved) {
+        code = code || saved.code;
+        heading = saved.label;
+        reason = "내 제품 수첩에 저장된 항목입니다.";
+      } else if (brand) {
+        code = code || brand.code;
+        heading = `${q} (${brand.term})`;
+        reason = brand.reason;
+      } else if (cat) {
+        code = code || cat.item.code;
+        heading = `${q} → ${cat.item.name}`;
+        reason = cat.reason;
+      } else if (code) {
+        reason = "판별 또는 선택된 부호입니다.";
       } else {
-        hero.style.display = "none";
-        hero.innerHTML = "";
+        panel.style.display = "none";
+        panel.innerHTML = "";
         return;
       }
 
-      const codeObj = CATEGORIES.find((c) => c.code === activeCode) || CATEGORIES[5];
+      const obj = EXPENSE_ITEMS.find((x) => x.code === code) || EXPENSE_ITEMS[5];
 
-      let purposeHtml = "";
-      if (showPurposeSelector) {
-        const buttonsHtml = purposeOptions
+      let purposeBlock = "";
+      if (multi) {
+        const btns = multi.options
           .map(
             (opt) =>
-              `<button class="btn btn-accent" type="button" onclick="choosePurpose('${rawQuery.replace(/'/g, "\\'")}', '${opt.code}', '${opt.purposeText.replace(/'/g, "\\'")}')">${opt.label}</button>`
+              `<button class="btn btn-purpose" type="button" onclick="selectPurpose('${q.replace(/'/g, "\\'")}', '${opt.code}', '${opt.purposeText.replace(/'/g, "\\'")}')">${opt.label}</button>`
           )
           .join("");
-
-        purposeHtml = `
-          <div class="purpose-box">
-            <p class="purpose-title">⚠️ 용도에 따라 부호가 달라집니다! ${multi.question}</p>
-            <div class="purpose-actions">${buttonsHtml}</div>
-            <button class="btn btn-primary" type="button" onclick="saveCurrentToNotebook('${rawQuery.replace(/'/g, "\\'")}', '${codeObj.code}', '${(selectedPurposeLabel || purposeOptions[0].purposeText).replace(/'/g, "\\'")}')">
-              📒 용도 포함 수첩 저장
-            </button>
+        purposeBlock = `
+          <div class="purpose-card">
+            <p class="purpose-q">⚠️ 용도에 따라 부호가 달라집니다! ${multi.question}</p>
+            <div class="purpose-btns">${btns}</div>
+            <button class="btn btn-save" type="button" onclick="saveNotebookItem('${q.replace(/'/g, "\\'")}', '${obj.code}', '${(overridePurpose || multi.options[0].purposeText).replace(/'/g, "\\'")}')">📒 용도 포함 수첩 저장</button>
           </div>
         `;
       } else {
-        purposeHtml = `
-          <div style="margin-top:8px;">
-            <button class="btn" type="button" onclick="saveCurrentToNotebook('${rawQuery.replace(/'/g, "\\'")}', '${codeObj.code}', '${(selectedPurposeLabel || "").replace(/'/g, "\\'")}')">
-              📒 내 제품 수첩에 저장
-            </button>
-          </div>
+        purposeBlock = `
+          <button class="btn btn-save" type="button" onclick="saveNotebookItem('${q.replace(/'/g, "\\'")}', '${obj.code}', '${overridePurpose.replace(/'/g, "\\'")}')">📒 내 제품 수첩에 저장</button>
         `;
       }
 
-      hero.style.display = "block";
-      hero.innerHTML = `
-        <div class="code-badge">부호 ${codeObj.code} · ${codeObj.name}</div>
-        <h2 class="result-name">${highlightText(titleText, rawQuery)}</h2>
-        <p class="result-desc">${reasonText} <br/>구분: ${codeObj.cat} | 단위: ${codeObj.unit} | 설명: ${codeObj.desc}</p>
-        ${purposeHtml}
+      panel.style.display = "block";
+      panel.innerHTML = `
+        <div class="code-pill">부호 ${obj.code} · ${obj.name}</div>
+        <h2 class="hero-title">${highlight(heading, q)}</h2>
+        <p class="hero-desc">${reason}<br/>구분: ${obj.cat} | 단위: ${obj.unit} | 설명: ${obj.desc}</p>
+        ${purposeBlock}
       `;
     }
 
-    window.choosePurpose = function (queryTerm, code, purposeText) {
-      selectedOverrideCode = code;
-      selectedPurposeLabel = purposeText;
-      renderTopResult();
-      setStatus(`'${queryTerm}' → ${purposeText} (부호 ${code}) 확정`);
-    };
-
-    window.saveCurrentToNotebook = function (queryTerm, code, purposeText) {
-      const targetName = queryTerm || code;
-      saveItemToNotebook(targetName, code, purposeText);
+    window.selectPurpose = function (q, code, purposeText) {
+      overrideCode = code;
+      overridePurpose = purposeText;
+      renderHero();
+      setStatus(`'${q}' → ${purposeText} (부호 ${code}) 확정`);
     };
 
     function renderQuickChips() {
       const wrap = document.getElementById("quickChips");
       wrap.innerHTML = "";
 
-      BRAND_DICT.forEach((b) => {
+      BRANDS.forEach((b) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "chip";
+        btn.className = "chip-btn";
         btn.textContent = `${b.term} (${b.code})`;
         btn.onclick = () => {
-          selectedOverrideCode = null;
-          selectedPurposeLabel = null;
+          overrideCode = null;
+          overridePurpose = "";
           document.getElementById("searchInput").value = b.term;
           setStatus(`상표 '${b.term}' 검색`);
-          renderTopResult();
-          renderCodeList();
+          renderHero();
+          renderList();
         };
         wrap.appendChild(btn);
       });
 
-      MULTI_PURPOSE_ITEMS.forEach((m) => {
+      MULTI_ITEMS.forEach((m) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "chip multi";
+        btn.className = "chip-btn multi-chip";
         btn.textContent = `용도구분: ${m.term}`;
         btn.onclick = () => {
-          selectedOverrideCode = null;
-          selectedPurposeLabel = null;
+          overrideCode = null;
+          overridePurpose = "";
           document.getElementById("searchInput").value = m.term;
           setStatus(`다용도 품목 '${m.term}' 용도 선택`);
-          renderTopResult();
-          renderCodeList();
+          renderHero();
+          renderList();
         };
         wrap.appendChild(btn);
       });
     }
 
     function renderNotebook() {
-      const items = getSavedItems();
-      const card = document.getElementById("notebookCard");
+      const items = loadNotebook();
+      const panel = document.getElementById("notebookPanel");
       const wrap = document.getElementById("notebookChips");
       if (!items.length) {
-        card.style.display = "none";
+        panel.style.display = "none";
         return;
       }
-      card.style.display = "block";
+      panel.style.display = "block";
       wrap.innerHTML = "";
       items.forEach((it) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "chip saved";
+        btn.className = "chip-btn saved-chip";
         btn.textContent = `${it.label} · ${it.code}`;
         btn.onclick = () => {
-          selectedOverrideCode = it.code;
-          selectedPurposeLabel = it.purposeText || "";
+          overrideCode = it.code;
+          overridePurpose = it.purposeText || "";
           document.getElementById("searchInput").value = it.rawName || it.label;
           setStatus(`저장된 '${it.label}' 불러옴`);
-          renderTopResult();
-          renderCodeList();
+          renderHero();
+          renderList();
         };
         wrap.appendChild(btn);
       });
     }
 
-    function renderCodeList() {
+    function renderList() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      const listEl = document.getElementById("codeList");
-
-      const filtered = CATEGORIES.filter((c) => {
-        const catOk = currentCategory === "전체" || c.cat === currentCategory;
-        if (!catOk) return false;
+      const box = document.getElementById("codeList");
+      const rows = EXPENSE_ITEMS.filter((item) => {
+        const catMatch = activeCat === "전체" || item.cat === activeCat;
+        if (!catMatch) return false;
         if (!q) return true;
         return (
-          c.code.includes(q) ||
-          c.name.toLowerCase().includes(q) ||
-          c.desc.toLowerCase().includes(q) ||
-          c.keywords.some((k) => k.toLowerCase().includes(q))
+          item.code.includes(q) ||
+          item.name.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.keywords.some((k) => k.toLowerCase().includes(q))
         );
       });
 
-      if (!filtered.length) {
-        listEl.innerHTML = `<div class="item-row"><div class="item-body">일치하는 항목이 없습니다. 상단의 <strong>🌐 인터넷·AI 판별</strong> 버튼을 눌러 보세요.</div></div>`;
+      if (!rows.length) {
+        box.innerHTML = `<div class="list-item"><div class="list-sub">일치하는 항목이 없습니다. <strong>🌐 인터넷·AI 판별</strong> 버튼을 눌러 보세요.</div></div>`;
         return;
       }
 
-      listEl.innerHTML = filtered
+      box.innerHTML = rows
         .map(
-          (c) => `
-          <div class="item-row">
-            <div class="item-code">${c.code}</div>
-            <div class="item-body">
-              <div class="item-head">${highlightText(c.name, q)} <span style="font-size:13px;font-weight:600;color:var(--muted);">[${c.cat} · ${c.unit}]</span></div>
-              <div class="item-sub">${highlightText(c.desc, q)}</div>
+          (item) => `
+          <div class="list-item">
+            <div class="list-code">${item.code}</div>
+            <div>
+              <div class="list-title">${highlight(item.name, q)} <span style="font-size:13px;font-weight:600;color:var(--muted);">[${item.cat} · ${item.unit}]</span></div>
+              <div class="list-sub">${highlight(item.desc, q)}</div>
             </div>
           </div>
         `
@@ -767,93 +741,90 @@
         .join("");
     }
 
-    async function runOnlineLookup() {
+    async function doOnlineLookup() {
       const q = document.getElementById("searchInput").value.trim();
       if (!q) {
-        setStatus("판별할 제품명이나 품목명을 먼저 입력해 주세요.");
+        setStatus("판별할 품목명이나 상표명을 먼저 입력해 주세요.");
         return;
       }
 
       setStatus(`'${q}' 인터넷·AI 판별 중...`);
 
-      const multi = findMultiPurpose(q);
-      if (multi) {
-        selectedOverrideCode = null;
-        selectedPurposeLabel = null;
-        renderTopResult();
+      if (matchMulti(q)) {
+        overrideCode = null;
+        overridePurpose = "";
+        renderHero();
         setStatus(`'${q}'는 용도 선택이 필요한 품목입니다.`);
         return;
       }
 
-      const brand = findBrand(q);
+      const brand = matchBrand(q);
       if (brand) {
-        selectedOverrideCode = brand.code;
-        selectedPurposeLabel = "";
-        renderTopResult();
-        setStatus(`상표 사전 확인 완료 → 부호 ${brand.code}`);
+        overrideCode = brand.code;
+        overridePurpose = "";
+        renderHero();
+        setStatus(`상표 확인 완료 → 부호 ${brand.code}`);
         return;
       }
 
       try {
-        const url = `https://ko.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(q)}&limit=3&namespace=0&format=json&origin=*`;
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          const titles = data[1] || [];
-          const descs = data[2] || [];
-          const combinedText = `${q} ${titles.join(" ")} ${descs.join(" ")}`;
-          const guessed = inferOnlineHeuristic(combinedText);
-          selectedOverrideCode = guessed.code;
-          selectedPurposeLabel = "";
-          renderTopResult();
+        const api = `https://ko.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(q)}&limit=3&namespace=0&format=json&origin=*`;
+        const resp = await fetch(api);
+        if (resp.ok) {
+          const data = await resp.json();
+          const merged = `${q} ${(data[1] || []).join(" ")} ${(data[2] || []).join(" ")}`;
+          const guessed = guessByText(merged);
+          overrideCode = guessed.code;
+          overridePurpose = "";
+          renderHero();
           setStatus(`인터넷 정보 참고 판별 완료 → 부호 ${guessed.code} (${guessed.reason})`);
           return;
         }
       } catch (e) {
-        // 오프라인 또는 네트워크 차단 시 기본 규칙으로 판별
+        // 오프라인 또는 외부 접속 제한 시 기본 판별 사용
       }
 
-      const fallback = inferOnlineHeuristic(q);
-      selectedOverrideCode = fallback.code;
-      selectedPurposeLabel = "";
-      renderTopResult();
+      const fallback = guessByText(q);
+      overrideCode = fallback.code;
+      overridePurpose = "";
+      renderHero();
       setStatus(`기본 판별 적용 → 부호 ${fallback.code} (${fallback.reason})`);
     }
 
     document.getElementById("searchInput").addEventListener("input", () => {
-      selectedOverrideCode = null;
-      selectedPurposeLabel = null;
+      overrideCode = null;
+      overridePurpose = "";
       setStatus("");
-      renderTopResult();
-      renderCodeList();
+      renderHero();
+      renderList();
     });
 
     document.getElementById("searchInput").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const q = document.getElementById("searchInput").value.trim();
-        if (q && !findMultiPurpose(q) && !findBrand(q) && !findBestCategory(q) && !findSavedMatch(q)) {
-          runOnlineLookup();
+        if (q && !matchMulti(q) && !matchBrand(q) && !matchCategory(q) && !matchSaved(q)) {
+          doOnlineLookup();
         }
       }
     });
 
-    document.getElementById("lookupBtn").addEventListener("click", runOnlineLookup);
+    document.getElementById("lookupBtn").addEventListener("click", doOnlineLookup);
 
     document.getElementById("clearBtn").addEventListener("click", () => {
       document.getElementById("searchInput").value = "";
-      selectedOverrideCode = null;
-      selectedPurposeLabel = null;
+      overrideCode = null;
+      overridePurpose = "";
       setStatus("");
-      renderTopResult();
-      renderCodeList();
+      renderHero();
+      renderList();
     });
 
-    document.querySelectorAll(".tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        currentCategory = tab.dataset.cat;
-        renderCodeList();
+    document.querySelectorAll(".cat-tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".cat-tab").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeCat = btn.dataset.cat;
+        renderList();
       });
     });
 
@@ -873,7 +844,7 @@
 
     renderQuickChips();
     renderNotebook();
-    renderCodeList();
+    renderList();
   </script>
 </body>
 </html>
