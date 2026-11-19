@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농업지출 부호 자동 검색기 (부호 101~132 · AI 신제품 판별)</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR & Inter (시니어 가독성 최적화) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            word-break: keep-all;
+        }
+        /* 형광펜 하이라이트 효과 */
+        mark.highlight {
+            background-color: #fef08a;
+            color: #0f172a;
+            font-weight: 900;
+            padding: 0 4px;
+            border-radius: 4px;
+            box-shadow: inset 0 -2px 0 #eab308;
+        }
+        /* 카드 전환 애니메이션 */
+        .card-transition {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .card-transition:hover {
+            transform: translateY(-2px);
+        }
+        /* 스피너 애니메이션 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-fast {
+            animation: spin 0.8s linear infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 상단 헤더 & 대형 검색 영역 -->
+    <header class="bg-emerald-900 text-white shadow-xl sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 py-4 sm:py-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="inline-block bg-emerald-950 text-emerald-200 text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full border border-emerald-700">
+                        9. 농업지출 기준표 (부호 101~132)
+                    </span>
+                    <span class="inline-block bg-amber-400 text-slate-950 text-xs sm:text-sm font-black px-2.5 py-1 rounded-full">
+                        상표명 · 용도별 구분 · 신제품 판별
+                    </span>
+                </div>
+                <button 
+                    type="button" 
+                    id="openNotebookBtn"
+                    class="self-start sm:self-auto inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-700 active:bg-emerald-950 text-white border border-emerald-500 px-3.5 py-1.5 rounded-xl text-sm sm:text-base font-extrabold transition cursor-pointer"
+                >
+                    <span>📒 내 제품 수첩</span>
+                    <span id="customCountBadge" class="bg-yellow-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">0</span>
+                </button>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-black tracking-tight mb-3">
+                농업지출 부호 자동 검색기
+            </h1>
+
+            <!-- 대형 검색 입력창 + 인터넷 AI 검색 실행 버튼 -->
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <div class="relative flex-grow">
+                    <label for="searchInput" class="sr-only">품목명 또는 상표명 입력</label>
+                    <div class="flex items-center bg-white rounded-2xl shadow-inner border-4 border-emerald-500 focus-within:border-yellow-400 overflow-hidden">
+                        <span class="pl-3.5 pr-2 text-emerald-700" aria-hidden="true">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="제품명·품목 입력 (예: 톤백, 멀칭비닐, 요소, 코니도)" 
+                            class="w-full py-3.5 sm:py-4 px-2 text-lg sm:text-2xl font-bold text-slate-900 placeholder-slate-400 focus:outline-none"
+                            autocomplete="off"
+                        >
+                        <button 
+                            id="clearBtn" 
+                            type="button"
+                            class="hidden mr-2.5 px-3.5 py-2 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 font-extrabold text-sm sm:text-base rounded-xl transition cursor-pointer shrink-0"
+                            aria-label="검색어 지우기"
+                        >
+                            지우기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 인터넷 AI 정밀 검색 버튼 -->
+                <button 
+                    type="button" 
+                    id="aiSearchBtn"
+                    class="px-5 py-3.5 sm:py-4 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black text-lg sm:text-xl rounded-2xl shadow-lg border-2 border-amber-200 flex items-center justify-center gap-2 transition cursor-pointer shrink-0"
+                >
+                    <span class="text-xl">🌐</span>
+                    <span>인터넷·AI 판별</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+
+        <!-- [최상단 핵심 결론 카드] 검색 시 즉시 결론 도출 영역 -->
+        <section id="topConclusionSection" class="hidden" aria-live="polite">
+            <!-- 자바스크립트로 핵심 결론 카드 렌더링 -->
+        </section>
+
+        <!-- 자주 찾는 상표명 · 품목 버튼 영역 -->
+        <section aria-label="자주 찾는 상표명 및 품목" class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <h2 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-1.5">
+                    <span class="text-emerald-600 text-xl">●</span> 자주 찾는 상표명·품목 (눌러서 바로 확인)
+                </h2>
+                <span class="text-xs sm:text-sm text-slate-500 font-bold">비료·농약 상표명 포함</span>
+            </div>
+            <div id="quickKeywords" class="flex flex-wrap gap-2">
+                <!-- 자바스크립트로 버튼 동적 생성 -->
+            </div>
+        </section>
+
+        <!-- 대분류 필터 탭 & 검색 결과 목록 -->
+        <section class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <!-- 대분류 탭 -->
+                <div role="tablist" aria-label="대분류 필터" class="grid grid-cols-4 gap-1.5 bg-slate-200 p-1.5 rounded-2xl">
+                    <button type="button" data-category="전체" class="tab-btn py-2.5 px-2 sm:px-4 rounded-xl text-base sm:text-lg font-extrabold transition cursor-pointer bg-emerald-800 text-white shadow">
+                        전체 (19)
+                    </button>
+                    <button type="button" data-category="재료비" class="tab-btn py-2.5 px-2 sm:px-4 rounded-xl text-base sm:text-lg font-extrabold transition cursor-pointer text-slate-700 hover:bg-white/70">
+                        재료비 (6)
+                    </button>
+                    <button type="button" data-category="노무비" class="tab-btn py-2.5 px-2 sm:px-4 rounded-xl text-base sm:text-lg font-extrabold transition cursor-pointer text-slate-700 hover:bg-white/70">
+                        노무비 (1)
+                    </button>
+                    <button type="button" data-category="경비" class="tab-btn py-2.5 px-2 sm:px-4 rounded-xl text-base sm:text-lg font-extrabold transition cursor-pointer text-slate-700 hover:bg-white/70">
+                        경비 (12)
+                    </button>
+                </div>
+
+                <!-- 검색 결과 요약 -->
+                <div id="resultSummary" class="text-base sm:text-lg font-bold text-slate-700 px-1">
+                    전체 <span class="text-emerald-800 font-black">19</span>개 항목 표시 중
+                </div>
+            </div>
+
+            <!-- 검색 결과 카드 리스트 -->
+            <div id="resultsContainer" class="space-y-4">
+                <!-- 자바스크립트로 카드 렌더링 -->
+            </div>
+
+            <!-- 기본 사전에 없을 때: 인터넷 AI 자동 판별 & 외부 조회 안내 -->
+            <div id="emptyState" class="hidden bg-white border-2 border-amber-400 rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-md">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-4xl">
+                    🔎
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900">
+                        기본 품목표에 바로 일치하는 단어가 없습니다.
+                    </h3>
+                    <p class="text-base sm:text-lg text-slate-700 max-w-xl mx-auto leading-relaxed">
+                        입력하신 <strong id="emptyQueryLabel" class="text-emerald-800 underline decoration-amber-400 decoration-4"></strong>이(가) <strong>신제품 상표명</strong>이나 특정 농약·비료 이름인가요?<br>
+                        아래 버튼을 누르면 <strong>인터넷에서 제품 성분을 찾아 부호를 자동 판별</strong>합니다.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+                    <button type="button" id="emptyAiSearchBtn" class="w-full sm:w-auto px-6 py-4 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black text-lg sm:text-xl rounded-2xl shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                        <span>🌐 인터넷·AI로 신제품 자동 판별하기</span>
+                    </button>
+                    <button type="button" id="resetAllBtn" class="w-full sm:w-auto px-5 py-4 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-base sm:text-lg rounded-2xl cursor-pointer">
+                        전체 19개 항목 보기
+                    </button>
+                </div>
+
+                <!-- 1클릭 외부 공식 조회 보조 링크 -->
+                <div class="pt-4 border-t border-slate-200">
+                    <p class="text-sm font-bold text-slate-500 mb-2.5">직접 포털에서 제품 용도·성분 확인하기</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <a id="extNaverLink" href="https://search.naver.com/search.naver" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm sm:text-base rounded-xl transition">
+                            N 네이버에서 제품 검색 ↗
+                        </a>
+                        <a id="extDaumLink" href="https://search.daum.net/search" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm sm:text-base rounded-xl transition">
+                            D 다음에서 제품 검색 ↗
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 하단 푸터 -->
+    <footer class="bg-slate-900 text-slate-300 py-6 px-4 mt-12 text-center text-sm sm:text-base">
+        <p class="font-bold text-white mb-1">9. 농업지출 부호 자동 검색기 (101 ~ 132)</p>
+        <p class="text-slate-400">품목의 실제 사용 용도(재배·생산 vs 출하·판매)에 따라 정확한 부호를 선택하세요.</p>
+    </footer>
+
+    <!-- [모달] 내 제품 수첩 (사용자 저장 품목 관리 및 백업) -->
+    <div id="notebookModal" class="hidden fixed inset-0 bg-slate-950/70 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="notebookModalTitle">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden border-2 border-slate-300">
+            <!-- 모달 헤더 -->
+            <div class="bg-emerald-900 text-white px-5 py-4 flex items-center justify-between">
+                <div>
+                    <h2 id="notebookModalTitle" class="text-xl sm:text-2xl font-black">📒 내 제품 수첩 (저장된 상표명)</h2>
+                    <p class="text-xs sm:text-sm text-emerald-200 mt-0.5">저장해 둔 제품은 인터넷 없이도 검색 시 즉시 나타납니다.</p>
+                </div>
+                <button type="button" id="closeNotebookBtn" class="px-3.5 py-2 bg-emerald-800 hover:bg-emerald-700 rounded-xl font-extrabold text-base cursor-pointer">
+                    닫기 ✕
+                </button>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="p-5 overflow-y-auto flex-grow space-y-5">
+                <!-- 수동 제품 직접 등록 폼 -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <h3 class="text-base sm:text-lg font-black text-slate-800">+ 새 제품명 직접 등록하기</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label for="manualProdName" class="block text-sm font-bold text-slate-700 mb-1">제품명·상표명</label>
+                            <input type="text" id="manualProdName" placeholder="예: 슈퍼성장비료" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-base font-bold focus:outline-none focus:border-emerald-600">
+                        </div>
+                        <div>
+                            <label for="manualProdCode" class="block text-sm font-bold text-slate-700 mb-1">해당 부호 선택</label>
+                            <select id="manualProdCode" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-base font-bold bg-white focus:outline-none focus:border-emerald-600">
+                                <!-- JS로 19개 항목 채움 -->
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="manualProdNote" class="block text-sm font-bold text-slate-700 mb-1">간단한 메모 (선택사항)</label>
+                        <input type="text" id="manualProdNote" placeholder="예: 농협에서 구입한 엽면시비용 영양제" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-base focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <button type="button" id="addManualProdBtn" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black text-base sm:text-lg rounded-xl shadow cursor-pointer">
+                        내 제품 수첩에 저장하기
+                    </button>
+                </div>
+
+                <!-- 저장된 제품 목록 -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-base sm:text-lg font-black text-slate-800">저장된 제품 목록</h3>
+                        <div class="flex gap-2">
+                            <button type="button" id="exportDataBtn" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs sm:text-sm rounded-lg cursor-pointer">
+                                백업 내보내기
+                            </button>
+                            <label class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs sm:text-sm rounded-lg cursor-pointer">
+                                불러오기
+                                <input type="file" id="importDataInput" accept=".json" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="customProductList" class="space-y-2.5">
+                        <!-- JS로 렌더링 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 메시지 -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-950 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-base sm:text-lg font-bold opacity-0 pointer-events-none transition-opacity duration-200 z-50 flex items-center gap-2 border border-slate-700">
+        <span class="text-yellow-400">✔</span>
+        <span id="toastText">안내 메시지</span>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * 1. '9. 농업지출' 19개 전체 항목 기준 데이터베이스 + 시중 주요 상표명/일상어 사전
+         * ============================================================================
+         */
+        const EXPENSE_ITEMS = [
+            {
+                id: 1,
+                category: "재료비",
+                name: "종자종묘비",
+                code: "101",
+                unit: "kg, 주 등",
+                description: "농산물의 구입한 종자와 구입한 묘(관상수 묘목 포함)",
+                synonyms: [
+                    "씨앗", "씨", "모종", "묘목", "접목묘", "구근", "종구", "종서",
+                    "씨감자", "씨고구마", "볍씨", "모판", "육묘", "꽃씨", "나무묘목",
+                    "관상수", "과수묘목", "모종값", "고추모종", "배추모종", "수박모종", "딸기모종", "마늘종구"
+                ]
+            },
+            {
+                id: 2,
+                category: "재료비",
+                name: "비료비",
+                code: "102",
+                unit: "kg",
+                description: "구입한 퇴비, 녹비, 계분 등 유기질비료, 질소, 인산, 칼리, 영양제 등 무기질 비료 및 석회고토 등 기타비료",
+                synonyms: [
+                    "비료", "퇴비", "거름", "유박", "계분", "우분", "돈분", "가축분뇨퇴비", "녹비",
+                    "요소", "요소비료", "인비", "용성인비", "용과린", "중과석", "유안", "황산암모늄",
+                    "염화가리", "황산가리", "복합비료", "복비", "엔케이", "NK비료", "21-17-17", "원예범용",
+                    "맞춤형비료", "완효성비료", "질소", "인산", "칼리", "영양제", "작물영양제",
+                    "엽면시비", "엽면시비제", "칼슘제", "아미노산제", "붕소", "규산질", "규산질비료",
+                    "석회", "석회고토", "패화석", "미량요소", "화학비료", "유기질비료", "물비료", "액비", "관주비료"
+                ]
+            },
+            {
+                id: 3,
+                category: "재료비",
+                name: "농약비",
+                code: "103",
+                unit: "kg, ml",
+                description: "살충제, 살균제, 제초제, 전착제, 발근제, 종자소독제, 생장조정제 등 모든 농약",
+                synonyms: [
+                    "농약", "약", "살충제", "살균제", "제초제", "풀약", "벌레약", "진딧물약", "응애약",
+                    "근사미", "바스타", "라운드업", "그라목손", "비선택성제초제", "논제초제", "밭제초제",
+                    "코니도", "스미치온", "다이센", "다이센엠45", "포룸디", "델란", "베노밀", "지베렐린",
+                    "지베렐린산", "톱신엠", "만코제브", "아바멕틴", "에마멕틴", "클로르페나피르", "이미다클로프리드",
+                    "카보설판", "후라단", "모캡", "메소밀", "파단", "리도밀", "실바코", "오티바", "프린트",
+                    "전착제", "카바", "발근제", "루톤", "종자소독제", "소독약", "생장조정제", "성장촉진제",
+                    "토양살충제", "훈증제", "방제약", "탄저병약", "흰가루병약", "노균병약", "청벌레약", "나방약"
+                ]
+            },
+            {
+                id: 4,
+                category: "재료비",
+                name: "동물관리비",
+                code: "104",
+                unit: "-",
+                description: "사육중인 대소동물을 관리하기 위해 쓴 비용, 가축의료비, 부화용종란대, 양봉비, 가축교배료, 양잠비, 분뇨처리비, 귀표 등 (※대소동물 구입비는 '대소동물 구입 및 판매'카드에 기입)",
+                synonyms: [
+                    "가축병원", "수의사", "동물약", "가축약품", "백신", "예방접종", "구제역백신",
+                    "종란", "부화", "양봉", "벌통관리", "교배", "수정료", "인공수정", "정액대",
+                    "양잠", "누에", "분뇨처리", "똥치우기", "귀표", "이표", "가축치료", "동물치료", "축산약품", "소독제(축사용)"
+                ]
+            },
+            {
+                id: 5,
+                category: "재료비",
+                name: "사료비",
+                code: "105",
+                unit: "kg",
+                description: "쌀겨, 밀기울, 배합사료, 깻묵 등의 일체의 사료구입비",
+                synonyms: [
+                    "사료", "배합사료", "펠렛사료", "쌀겨", "미강", "밀기울", "깻묵", "대두박",
+                    "건초", "조사료", "볏짚사료", "곤포사일리지", "사일리지", "옥수수사료", "티모시", "알팔파",
+                    "닭사료", "소사료", "돼지사료", "한우사료", "젖소사료", "양계사료", "먹이", "가축먹이",
+                    "비육사료", "어린송아지사료", "단미사료", "보조사료", "미네랄블록", "소금블록"
+                ]
+            },
+            {
+                id: 6,
+                category: "재료비",
+                name: "기타",
+                code: "109",
+                unit: "-",
+                description: "비닐, 밭작물의 지주대, 온상재료, 수정용벌, 유기농업용 오리구입비, 영농시설물 설치에 드는 볏짚, 이엉, 새끼, 수숫대 등 일체의 농산 부산물의 평가액과 우초액, 친환경 자재, 축사용 왕겨, 톱밥, 시설하우스 호스, 상토 등 구입비",
+                synonyms: [
+                    "비닐", "멀칭비닐", "하우스비닐", "지주대", "고추대", "활대", "온상", "수정벌", "화분매개벌",
+                    "유기농오리", "볏짚", "이엉", "새끼줄", "수숫대", "목초액", "우초액", "친환경자재",
+                    "왕겨", "톱밥", "깔짚", "호스", "관수호스", "점적호스", "상토", "육묘상토", "원예상토",
+                    "모종판", "트레이", "포트", "차광막", "부직포", "방초매트", "끈", "유인끈", "클립", "하우스밴드",
+                    "톤백", "마대", "포대", "콘티박스", "그물망", "선별망", "노끈"
+                ]
+            },
+            {
+                id: 7,
+                category: "노무비",
+                name: "노무비",
+                code: "111",
+                unit: "명",
+                description: "상시고용 및 임시 고용한 인부에게 지불한 현금 및 현물 노임, 급여물 등",
+                synonyms: [
+                    "인부", "일당", "품삯", "인건비", "노임", "급여", "월급", "알바", "아르바이트",
+                    "일손", "작업반장", "외국인근로자", "계절근로자", "고용", "인력사무소", "새참", "현물노임"
+                ]
+            },
+            {
+                id: 8,
+                category: "경비",
+                name: "영농광열비",
+                code: "121",
+                unit: "kw, l",
+                description: "농업용으로 사용한 전기, 상수도, 유류 및 윤활유 등의 구입비",
+                synonyms: [
+                    "전기", "전기세", "전기요금", "농사용전기", "수도", "수도세", "상수도", "물세",
+                    "기름", "기름값", "유류", "유류비", "경유", "휘발유", "면세유", "등유", "난방유",
+                    "보일러기름", "윤활유", "엔진오일", "미션오일", "구리스", "연료", "가스", "LPG", "농용유류"
+                ]
+            },
+            {
+                id: 9,
+                category: "경비",
+                name: "자산수선비",
+                code: "122",
+                unit: "-",
+                description: "농업용 자산(건물, 구축물, 기계기구)의 재조달가 10% 미만에 해당하는 경상수리비용",
+                synonyms: [
+                    "수리", "수리비", "고침", "농기계수리", "트랙터수리", "경운기수리", "관리기수리",
+                    "이앙기수리", "콤바인수리", "창고수리", "축사수리", "하우스수리", "부품교체",
+                    "타이어교체", "정비", "정비비", "용접", "보수공사", "농기계센터"
+                ]
+            },
+            {
+                id: 10,
+                category: "경비",
+                name: "소농구구입비",
+                code: "123",
+                unit: "대",
+                description: "장화, 장갑, 우의 등 농업용 피복비, 낫, 호미, 삽 등 소농기구 구입비 등 50만원 미만의 기계·기구 구입비",
+                synonyms: [
+                    "장화", "장갑", "목장갑", "고무장갑", "우의", "비옷", "작업복", "모자", "밀짚모자",
+                    "토시", "앞치마", "낫", "호미", "삽", "괭이", "쇠스랑", "전지가위", "가위", "톱",
+                    "망치", "분무기", "등짐분무기", "예초기날", "농기구", "소농기구", "공구", "바구니", "다라이", "물조리개"
+                ]
+            },
+            {
+                id: 11,
+                category: "경비",
+                name: "임차료",
+                code: "124",
+                unit: "-",
+                description: "농지, 농기계 및 농업시설(건물, 수정용 벌통)등의 임차료",
+                synonyms: [
+                    "임대료", "임차료", "도지", "도조", "논빌림", "밭빌림", "농지임대", "땅세",
+                    "농기계임대", "농기계임대사업소", "트랙터임대", "굴삭기임대", "창고임대", "저온창고임대", "벌통임대", "렌탈"
+                ]
+            },
+            {
+                id: 12,
+                category: "경비",
+                name: "수리시설사용료",
+                code: "125",
+                unit: "-",
+                description: "양거, 양기 등의 재조달가 10% 이하의 수리비, 양수조합비, 제방 수리 분담금, 지하수(유료) 시설비 등",
+                synonyms: [
+                    "물세", "수세", "양수장", "양수조합", "농어촌공사물세", "지하수", "관정",
+                    "수로", "제방", "배수로", "양수기수리", "수리계", "물값", "농업용수"
+                ]
+            },
+            {
+                id: 13,
+                category: "경비",
+                name: "농작업위탁비",
+                code: "126",
+                unit: "-",
+                description: "농사업무를 다른 사람에게 위탁하여 수행한 경우의 비용",
+                synonyms: [
+                    "위탁", "대행", "로터리작업", "논갈이", "밭갈이", "모내기대행", "이앙작업",
+                    "수확대행", "콤바인작업", "벼베기", "방제대행", "드론방제", "항공방제",
+                    "비료살포대행", "운반작업", "트랙터작업", "남에게맡김", "작목반작업비"
+                ]
+            },
+            {
+                id: 14,
+                category: "경비",
+                name: "조세",
+                code: "127",
+                unit: "-",
+                description: "국세 및 지방세(토지세, 소득세, 가옥세 등 경상적 조세) 중 농업용 세금 (고정자산의 취득세, 등록세, 양도세와 같은 비경상조세는 가계지출 카드에서 조사한다)",
+                synonyms: [
+                    "세금", "토지세", "재산세", "농지세", "소득세", "종합소득세", "가옥세", "국세", "지방세", "면허세", "농업용자동차세"
+                ]
+            },
+            {
+                id: 15,
+                category: "경비",
+                name: "부담금",
+                code: "128",
+                unit: "-",
+                description: "이장보수, 환경개선 부담금 등 농업용 부담금",
+                synonyms: [
+                    "부담금", "이장", "이장보수", "이장수당", "마을기금", "환경개선부담금", "농지보전부담금", "조합비", "작목반회비"
+                ]
+            },
+            {
+                id: 16,
+                category: "경비",
+                name: "이자",
+                code: "129",
+                unit: "-",
+                description: "농업용으로 사용한 부채에 대한 지불이자",
+                synonyms: [
+                    "이자", "대출이자", "농협이자", "영농자금이자", "융자이자", "빚이자", "할부이자"
+                ]
+            },
+            {
+                id: 17,
+                category: "경비",
+                name: "기타비용",
+                code: "130",
+                unit: "-",
+                description: "신문구독, 농업용 전화비, 교통비, 숙박비, 화물운송비, 생산관리기기의 유지에 소요되는 소모품비 등, 축산물 검사비, 농자재 운반 비용, 축산비용, 소규모 가축이나 야생동물 구제비, 농기계상해, 출시외채, 농업인 안전보험 등 농업용 소멸성 보험 등, 50만원 미만의 소모품구입비",
+                synonyms: [
+                    "신문", "농민신문", "전화비", "핸드폰비", "통신비", "교통비", "차비", "택배비",
+                    "화물비", "운송비", "용달비", "소모품", "건전지", "전구", "축산물검사", "등급판정",
+                    "멧돼지구제", "고라니", "유해야생동물", "농기계보험", "농기계종합보험", "농업인안전보험", "안전공제", "소멸성보험"
+                ]
+            },
+            {
+                id: 18,
+                category: "경비",
+                name: "보험료",
+                code: "131",
+                unit: "-",
+                description: "가축, 어류, 농작물 재해보험 등 농작물재해보상관련 보험",
+                synonyms: [
+                    "보험", "보험료", "농작물재해보험", "재해보험", "가축재해보험", "양식수산물재해보험", "풍수해보험", "태풍보험", "우박보험"
+                ]
+            },
+            {
+                id: 19,
+                category: "경비",
+                name: "판매자재",
+                code: "132",
+                unit: "-",
+                description: "푸대, 박스 등 포장자재, 기타 판매용 자재 (판매수수료 및 하역자재비 등은 농산물판매카드에서 판매비용으로 조사)",
+                synonyms: [
+                    "박스", "종이박스", "골판지박스", "스티로폼박스", "푸대", "포대", "마대", "자루",
+                    "양파망", "망사", "비닐봉투", "포장지", "포장재", "포장자재", "테이프", "박스테이프",
+                    "끈", "밴딩", "라벨", "스티커", "난좌", "완충재", "출하자재", "판매자재",
+                    "톤백", "콘티박스", "노끈", "비닐", "멀칭비닐", "팔레트"
+                ]
+            }
+        ];
+
+        /**
+         * ============================================================================
+         * 1-2. 사용처(용도)에 따라 부호가 달라지는 복합·다용도 품목 규칙 사전
+         * ============================================================================
+         */
+        const MULTI_PURPOSE_RULES = [
+            {
+                id: "tonbag",
+                title: "톤백 · 마대 · 포대 · 자루",
+                keywords: ["톤백", "톤백자루", "마대", "마대자루", "포대", "비료포대", "자루", "곡물포대"],
+                guide: "담는 내용물과 사용 목적(밭일·보관용인지, 수확물 출하·판매용인지)에 따라 부호가 달라집니다.",
+                options: [
+                    {
+                        icon: "📦",
+                        label: "수확한 농산물을 담아 출하·판매할 때 사용",
+                        shortTag: "출하·판매용",
+                        code: "132",
+                        reason: "수확한 벼·곡물·채소 등을 출하하거나 판매하기 위해 담는 포대·톤백은 '132 판매자재'에 해당합니다."
+                    },
+                    {
+                        icon: "🌱",
+                        label: "밭에서 퇴비·흙·부산물 운반 및 영농 작업용으로 사용",
+                        shortTag: "영농·작업용",
+                        code: "109",
+                        reason: "판매 포장이 아니라 밭에서 거름·흙·자재를 나르거나 보관하는 영농 자재로 쓰면 '109 기타(재료비)'에 해당합니다."
+                    }
+                ]
+            },
+            {
+                id: "vinyl",
+                title: "비닐 · 멀칭비닐 · 비닐봉투",
+                keywords: ["멀칭비닐", "비닐", "검정비닐", "투명비닐", "비닐봉투", "포장비닐", "랩", "하우스비닐"],
+                guide: "밭·하우스 재배에 씌우는 비닐인지, 수확물을 소분 포장해서 파는 비닐인지 선택해 주세요.",
+                options: [
+                    {
+                        icon: "🌱",
+                        label: "밭에 씌우거나(멀칭) 하우스·보온 등 작물 재배에 사용",
+                        shortTag: "재배·멀칭용",
+                        code: "109",
+                        reason: "잡초 억제(멀칭), 보온, 하우스 피복 등 작물 생산·재배에 쓰이는 비닐은 '109 기타(재료비)'에 해당합니다."
+                    },
+                    {
+                        icon: "📦",
+                        label: "수확한 농산물을 소분·포장해서 판매할 때 사용",
+                        shortTag: "출하·포장용",
+                        code: "132",
+                        reason: "수확물을 담아 출하·판매하기 위해 구입한 비닐봉투·속비닐·포장필름은 '132 판매자재'에 해당합니다."
+                    }
+                ]
+            },
+            {
+                id: "string",
+                title: "끈 · 노끈 · 결속끈 · 테이프",
+                keywords: ["끈", "노끈", "유인끈", "결속끈", "케이블타이", "테이프", "박스테이프", "밴딩", "밴딩끈"],
+                guide: "작물 유인·하우스 고정용인지, 출하 박스·포대 포장용인지 선택해 주세요.",
+                options: [
+                    {
+                        icon: "🌱",
+                        label: "고추·오이 유인, 지주대·하우스 고정 등 재배에 사용",
+                        shortTag: "재배·유인용",
+                        code: "109",
+                        reason: "작물 줄기를 매거나 지주대·시설을 고정하는 영농 자재로 쓰면 '109 기타(재료비)'에 해당합니다."
+                    },
+                    {
+                        icon: "📦",
+                        label: "출하용 박스·포대·망을 묶거나 봉할 때 사용",
+                        shortTag: "출하·포장용",
+                        code: "132",
+                        reason: "출하 상자나 포대를 결속·봉인하는 포장 부자재로 쓰면 '132 판매자재'에 해당합니다."
+                    }
+                ]
+            },
+            {
+                id: "box",
+                title: "상자 · 박스 · 콘티박스 · 바구니 · 팔레트",
+                keywords: ["콘티박스", "플라스틱상자", "상자", "박스", "바구니", "수확바구니", "팔레트", "파레트"],
+                guide: "출하와 함께 나가는 포장재인지, 농장에서 반복 사용하는 작업용 운반도구인지 선택해 주세요.",
+                options: [
+                    {
+                        icon: "📦",
+                        label: "수확물 출하·판매 시 함께 나가는 포장 상자·자재",
+                        shortTag: "출하·포장용",
+                        code: "132",
+                        reason: "농산물을 담아 출하·판매하는 종이박스·스티로폼상자·일회용 출하용기는 '132 판매자재'에 해당합니다."
+                    },
+                    {
+                        icon: "🛠️",
+                        label: "농장에서 반복 사용하는 수확 바구니·콘티박스·운반도구",
+                        shortTag: "작업·운반도구",
+                        code: "123",
+                        reason: "판매용 포장재가 아니라 농작업·수확 시 반복 사용하는 50만원 미만 운반도구는 '123 소농구구입비'에 해당합니다."
+                    },
+                    {
+                        icon: "🌱",
+                        label: "모종 육묘·온상·시설 재배 자재용 트레이·상자",
+                        shortTag: "육묘·재배용",
+                        code: "109",
+                        reason: "육묘판·상토 상자 등 작물 재배 과정에 소모되는 영농자재는 '109 기타(재료비)'에 해당합니다."
+                    }
+                ]
+            },
+            {
+                id: "net",
+                title: "망 · 그물망 · 선별망 · 차광막 · 부직포",
+                keywords: ["망", "그물망", "양파망", "선별망", "오이망", "유인망", "차광막", "부직포", "방초매트"],
+                guide: "밭·하우스에 설치하는 재배용 망인지, 농산물을 담아 파는 포장망인지 선택해 주세요.",
+                options: [
+                    {
+                        icon: "🌱",
+                        label: "오이·콩 유인망, 방조망, 차광막, 방초매트 등 재배·시설용",
+                        shortTag: "재배·시설용",
+                        code: "109",
+                        reason: "작물 생육 관리나 밭·하우스 시설 피복에 쓰이는 망·차광막·부직포는 '109 기타(재료비)'에 해당합니다."
+                    },
+                    {
+                        icon: "📦",
+                        label: "양파·마늘·감자 등을 담아 출하·판매하는 포장망",
+                        shortTag: "출하·포장용",
+                        code: "132",
+                        reason: "수확한 농산물을 담아 출하·판매하기 위해 구입한 양파망·포장망은 '132 판매자재'에 해당합니다."
+                    }
+                ]
+            },
+            {
+                id: "tool_cut",
+                title: "가위 · 전지가위 · 수확칼 · 장갑",
+                keywords: ["가위", "전지가위", "적과가위", "칼", "수확칼", "장갑", "코팅장갑", "목장갑"],
+                guide: "일반 농작업·수확·전정에 쓰는 도구인지, 출하 포장 작업용인지 확인해 주세요.",
+                options: [
+                    {
+                        icon: "🛠️",
+                        label: "전정·적과·수확 등 일반 농작업용 도구 및 피복(장갑)",
+                        shortTag: "농작업용 도구",
+                        code: "123",
+                        reason: "농작업에 사용하는 가위·칼·장갑·장화 등 50만원 미만 소농기구 및 피복비는 '123 소농구구입비'에 해당합니다."
+                    },
+                    {
+                        icon: "📦",
+                        label: "선별·포장 작업장에서 출하 포장용으로 소모하는 자재",
+                        shortTag: "출하·포장용",
+                        code: "132",
+                        reason: "출하·판매 포장을 위해 직접 소모되는 포장 부자재 성격이라면 '132 판매자재'로 분류할 수 있습니다."
+                    }
+                ]
+            }
+        ];
+
+        // 자주 찾는 상표명 + 다용도 복합 품목 버튼 목록
+        const QUICK_KEYWORDS = [
+            { text: "톤백", multi: true },
+            { text: "멀칭비닐", multi: true },
+            { text: "노끈", multi: true },
+            { text: "콘티박스", multi: true },
+            { text: "요소", multi: false },
+            { text: "인비", multi: false },
+            { text: "근사미", multi: false },
+            { text: "코니도", multi: false },
+            { text: "곤포사일리지", multi: false },
+            { text: "퇴비", multi: false },
+            { text: "모종", multi: false },
+            { text: "인부", multi: false },
+            { text: "경유", multi: false },
+            { text: "드론방제", multi: false }
+        ];
+
+        // 로컬스토리지 키
+        const STORAGE_KEY = "agri_expense_custom_products_v1";
+
+        // 애플리케이션 상태
+        let currentQuery = "";
+        let currentCategory = "전체";
+        let customProducts = []; // { id, productName, code, note, source, createdAt }
+        let aiSearchResult = null; // 최근 인터넷·AI 판별 결과
+        let isAiLoading = false;
+        let selectedPurposeChoice = null; // { query, code, shortTag, reason, productSummary }
+
+        // DOM 요소 참조
+        const searchInput = document.getElementById("searchInput");
+        const clearBtn = document.getElementById("clearBtn");
+        const aiSearchBtn = document.getElementById("aiSearchBtn");
+        const topConclusionSection = document.getElementById("topConclusionSection");
+        const quickKeywordsContainer = document.getElementById("quickKeywords");
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const resultsContainer = document.getElementById("resultsContainer");
+        const resultSummary = document.getElementById("resultSummary");
+        const emptyState = document.getElementById("emptyState");
+        const emptyQueryLabel = document.getElementById("emptyQueryLabel");
+        const emptyAiSearchBtn = document.getElementById("emptyAiSearchBtn");
+        const resetAllBtn = document.getElementById("resetAllBtn");
+        const extNaverLink = document.getElementById("extNaverLink");
+        const extDaumLink = document.getElementById("extDaumLink");
+
+        // 수첩 모달 DOM
+        const openNotebookBtn = document.getElementById("openNotebookBtn");
+        const closeNotebookBtn = document.getElementById("closeNotebookBtn");
+        const notebookModal = document.getElementById("notebookModal");
+        const customCountBadge = document.getElementById("customCountBadge");
+        const manualProdName = document.getElementById("manualProdName");
+        const manualProdCode = document.getElementById("manualProdCode");
+        const manualProdNote = document.getElementById("manualProdNote");
+        const addManualProdBtn = document.getElementById("addManualProdBtn");
+        const customProductList = document.getElementById("customProductList");
+        const exportDataBtn = document.getElementById("exportDataBtn");
+        const importDataInput = document.getElementById("importDataInput");
+
+        const toast = document.getElementById("toast");
+        const toastText = document.getElementById("toastText");
+
+        /**
+         * ============================================================================
+         * 2. 유틸리티 함수
+         * ============================================================================
+         */
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function highlightText(text, query) {
+            if (!query || !text) return escapeHtml(text);
+            const safeText = escapeHtml(text);
+            const trimmed = query.trim();
+            if (!trimmed) return safeText;
+
+            const tokens = trimmed.split(/\s+/).filter(Boolean).map(escapeRegExp);
+            if (tokens.length === 0) return safeText;
+
+            const regex = new RegExp(`(${tokens.join('|')})`, 'gi');
+            return safeText.replace(regex, '<mark class="highlight">$1</mark>');
+        }
+
+        function getCategoryBadgeStyle(category) {
+            switch (category) {
+                case "재료비":
+                    return "bg-emerald-100 text-emerald-950 border-emerald-400";
+                case "노무비":
+                    return "bg-amber-100 text-amber-950 border-amber-400";
+                case "경비":
+                    return "bg-blue-100 text-blue-950 border-blue-400";
+                default:
+                    return "bg-slate-100 text-slate-800 border-slate-300";
+            }
+        }
+
+        let toastTimer = null;
+        function showToast(message) {
+            toastText.textContent = message;
+            toast.classList.remove("opacity-0");
+            toast.classList.add("opacity-100");
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove("opacity-100");
+                toast.classList.add("opacity-0");
+            }, 2500);
+        }
+
+        function copyItemInfo(code, name) {
+            const textToCopy = `[부호 ${code}] ${name}`;
+            const tempInput = document.createElement("textarea");
+            tempInput.value = textToCopy;
+            tempInput.style.position = "fixed";
+            tempInput.style.left = "-9999px";
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand("copy");
+                showToast(`"${textToCopy}" 복사되었습니다.`);
+            } catch (err) {
+                showToast("복사에 실패했습니다.");
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        function getItemByCode(code) {
+            return EXPENSE_ITEMS.find(item => item.code === String(code)) || null;
+        }
+
+        /**
+         * ============================================================================
+         * 3. 내 제품 수첩 (localStorage 관리)
+         * ============================================================================
+         */
+        function loadCustomProducts() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                customProducts = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(customProducts)) customProducts = [];
+            } catch (e) {
+                customProducts = [];
+            }
+            updateCustomBadge();
+        }
+
+        function saveCustomProductsToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(customProducts));
+            } catch (e) {
+                showToast("저장 공간이 부족하여 저장하지 못했습니다.");
+            }
+            updateCustomBadge();
+        }
+
+        function updateCustomBadge() {
+            customCountBadge.textContent = customProducts.length;
+        }
+
+        function saveProductToNotebook(productName, code, note = "", source = "직접등록") {
+            const cleanName = productName.trim();
+            if (!cleanName) {
+                showToast("제품명을 입력해 주세요.");
+                return false;
+            }
+            const targetItem = getItemByCode(code);
+            if (!targetItem) {
+                showToast("올바른 부호를 선택해 주세요.");
+                return false;
+            }
+
+            // 동일 제품명이 이미 있으면 덮어쓰기
+            const existingIdx = customProducts.findIndex(p => p.productName.toLowerCase() === cleanName.toLowerCase());
+            const entry = {
+                id: Date.now(),
+                productName: cleanName,
+                code: targetItem.code,
+                note: note.trim() || `${targetItem.name} 관련 제품`,
+                source,
+                createdAt: new Date().toLocaleDateString("ko-KR")
+            };
+
+            if (existingIdx >= 0) {
+                customProducts[existingIdx] = entry;
+            } else {
+                customProducts.unshift(entry);
+            }
+
+            saveCustomProductsToStorage();
+            renderCustomProductList();
+            showToast(`'${cleanName}' → [부호 ${targetItem.code} ${targetItem.name}] 수첩에 저장됨!`);
+            return true;
+        }
+
+        function deleteCustomProduct(id) {
+            customProducts = customProducts.filter(p => p.id !== id);
+            saveCustomProductsToStorage();
+            renderCustomProductList();
+            renderAll();
+            showToast("수첩에서 삭제되었습니다.");
+        }
+
+        function renderCustomProductList() {
+            if (customProducts.length === 0) {
+                customProductList.innerHTML = `
+                    <div class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-slate-500 text-base">
+                        아직 저장된 제품이 없습니다.<br>
+                        <span class="text-sm">인터넷·AI로 검색한 신제품을 저장하거나 위에서 직접 추가해 보세요.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            customProductList.innerHTML = customProducts.map(prod => {
+                const item = getItemByCode(prod.code);
+                const itemName = item ? item.name : "기타";
+                return `
+                    <div class="flex items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="bg-emerald-800 text-white text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-lg">
+                                    부호 ${escapeHtml(prod.code)} · ${escapeHtml(itemName)}
+                                </span>
+                                <span class="text-base sm:text-lg font-black text-slate-900 truncate">
+                                    ${escapeHtml(prod.productName)}
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 mt-1 truncate">
+                                ${escapeHtml(prod.note)} <span class="text-slate-400">(${escapeHtml(prod.source)} · ${escapeHtml(prod.createdAt)})</span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button type="button" onclick="searchFromNotebook('${escapeHtml(prod.productName)}')" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs sm:text-sm rounded-lg border border-emerald-200 cursor-pointer">
+                                조회
+                            </button>
+                            <button type="button" onclick="deleteCustomProduct(${prod.id})" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs sm:text-sm rounded-lg border border-rose-200 cursor-pointer">
+                                삭제
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function searchFromNotebook(prodName) {
+            notebookModal.classList.add("hidden");
+            searchInput.value = prodName;
+            currentQuery = prodName;
+            aiSearchResult = null;
+            selectedPurposeChoice = null;
+            setActiveCategory("전체");
+        }
+
+        /**
+         * ============================================================================
+         * 3-2. 복합·다용도 품목 감지 및 용도 선택 처리 함수
+         * ============================================================================
+         */
+        function findMultiPurposeRule(query) {
+            const clean = query.trim().toLowerCase();
+            if (!clean) return null;
+
+            // 정확한 일치 우선 검색
+            for (const rule of MULTI_PURPOSE_RULES) {
+                if (rule.keywords.some(kw => kw.toLowerCase() === clean)) {
+                    return rule;
+                }
+            }
+            // 부분 포함 검색 (2글자 이상)
+            if (clean.length >= 2) {
+                for (const rule of MULTI_PURPOSE_RULES) {
+                    if (rule.keywords.some(kw => clean.includes(kw.toLowerCase()) || kw.toLowerCase().includes(clean))) {
+                        return rule;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function selectLocalPurposeOption(ruleId, optionIndex) {
+            const rule = MULTI_PURPOSE_RULES.find(r => r.id === ruleId);
+            if (!rule || !rule.options[optionIndex]) return;
+            const opt = rule.options[optionIndex];
+            selectedPurposeChoice = {
+                query: currentQuery.trim(),
+                code: opt.code,
+                shortTag: opt.shortTag,
+                reason: opt.reason,
+                productSummary: `${currentQuery.trim()} (${opt.shortTag})`
+            };
+            renderAll();
+        }
+
+        function selectAiPurposeOption(optionIndex) {
+            if (!aiSearchResult || !aiSearchResult.options || !aiSearchResult.options[optionIndex]) return;
+            const opt = aiSearchResult.options[optionIndex];
+            selectedPurposeChoice = {
+                query: aiSearchResult.query,
+                code: opt.code,
+                shortTag: opt.shortTag,
+                reason: opt.reason,
+                productSummary: `${aiSearchResult.query} (${opt.shortTag})`
+            };
+            renderAll();
+        }
+
+        function resetPurposeChoice() {
+            selectedPurposeChoice = null;
+            renderAll();
+        }
+
+        function savePurposeChoiceToNotebook() {
+            if (!selectedPurposeChoice) return;
+            const labelWithPurpose = `${selectedPurposeChoice.query} (${selectedPurposeChoice.shortTag})`;
+            saveProductToNotebook(
+                labelWithPurpose,
+                selectedPurposeChoice.code,
+                selectedPurposeChoice.reason,
+                "용도선택저장"
+            );
+            renderAll();
+        }
+
+        /**
+         * ============================================================================
+         * 4. 로컬 사전 + 내 제품 수첩 통합 검색 엔진
+         * ============================================================================
+         */
+        function searchLocalDatabase(query) {
+            const rawQuery = query.trim().toLowerCase();
+            if (!rawQuery) {
+                return EXPENSE_ITEMS
+                    .filter(item => currentCategory === "전체" || item.category === currentCategory)
+                    .map(item => ({ item, score: 1, matchedReasons: [] }));
+            }
+
+            const queryTokens = rawQuery.split(/\s+/).filter(Boolean);
+            let results = [];
+
+            EXPENSE_ITEMS.forEach(item => {
+                if (currentCategory !== "전체" && item.category !== currentCategory) {
+                    return;
+                }
+
+                let score = 0;
+                let matchedReasons = [];
+                let allTokensMatched = true;
+
+                // 해당 부호에 연결된 사용자 수첩 제품들
+                const linkedCustom = customProducts.filter(cp => cp.code === item.code);
+
+                for (const token of queryTokens) {
+                    let tokenMatched = false;
+
+                    // 1) 사용자 수첩 일치 (최우선)
+                    const customHits = linkedCustom.filter(cp =>
+                        cp.productName.toLowerCase().includes(token) || token.includes(cp.productName.toLowerCase())
+                    );
+                    if (customHits.length > 0) {
+                        score += 120;
+                        tokenMatched = true;
+                        customHits.forEach(ch => {
+                            const label = `내 수첩: ${ch.productName} (${ch.note})`;
+                            if (!matchedReasons.includes(label)) matchedReasons.push(label);
+                        });
+                    }
+
+                    // 2) 부호 번호 일치
+                    if (item.code === token) {
+                        score += 100;
+                        tokenMatched = true;
+                    } else if (item.code.includes(token)) {
+                        score += 60;
+                        tokenMatched = true;
+                    }
+
+                    // 3) 공식 항목명 일치
+                    const nameLower = item.name.toLowerCase();
+                    if (nameLower === token) {
+                        score += 95;
+                        tokenMatched = true;
+                    } else if (nameLower.includes(token)) {
+                        score += 55;
+                        tokenMatched = true;
+                    }
+
+                    // 4) 시중 상표명 및 일상어 사전 매칭
+                    const synHits = item.synonyms.filter(syn => {
+                        const sLower = syn.toLowerCase();
+                        return sLower === token || sLower.includes(token) || (token.length >= 2 && token.includes(sLower));
+                    });
+                    if (synHits.length > 0) {
+                        const exactSyn = synHits.some(s => s.toLowerCase() === token);
+                        score += exactSyn ? 85 : 45;
+                        tokenMatched = true;
+                        synHits.forEach(s => {
+                            if (!matchedReasons.includes(s)) matchedReasons.push(s);
+                        });
+                    }
+
+                    // 5) 내용예시 본문 일치
+                    if (item.description.toLowerCase().includes(token)) {
+                        score += 30;
+                        tokenMatched = true;
+                    }
+
+                    // 6) 대분류 일치
+                    if (item.category.toLowerCase().includes(token)) {
+                        score += 15;
+                        tokenMatched = true;
+                    }
+
+                    if (!tokenMatched) {
+                        allTokensMatched = false;
+                        break;
+                    }
+                }
+
+                if (allTokensMatched && score > 0) {
+                    results.push({ item, score, matchedReasons });
+                }
+            });
+
+            results.sort((a, b) => b.score - a.score || Number(a.item.code) - Number(b.item.code));
+            return results;
+        }
+
+        /**
+         * ============================================================================
+         * 5. 인터넷 · AI 실시간 신제품 판별 엔진 (Gemini API + Google Search Grounding)
+         * ============================================================================
+         */
+        async function fetchWithBackoff(url, options, maxRetries = 3) {
+            let delay = 1000;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return response;
+                    if (response.status === 429 || response.status >= 500) {
+                        if (attempt === maxRetries) return response;
+                    } else {
+                        return response;
+                    }
+                } catch (err) {
+                    if (attempt === maxRetries) throw err;
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+        }
+
+        async function runInternetAiSearch(queryText) {
+            const cleanQuery = (queryText || searchInput.value).trim();
+            if (!cleanQuery) {
+                showToast("먼저 제품명이나 품목을 입력해 주세요.");
+                searchInput.focus();
+                return;
+            }
+
+            if (isAiLoading) return;
+            isAiLoading = true;
+            aiSearchResult = null;
+            selectedPurposeChoice = null;
+            renderTopConclusion(); // 로딩 UI 즉시 표시
+
+            // 전체 탭으로 전환하여 결과가 가려지지 않게 함
+            if (currentCategory !== "전체") {
+                currentCategory = "전체";
+                tabButtons.forEach(btn => {
+                    if (btn.getAttribute("data-category") === "전체") {
+                        btn.classList.add("bg-emerald-800", "text-white", "shadow");
+                        btn.classList.remove("text-slate-700", "hover:bg-white/70");
+                    } else {
+                        btn.classList.remove("bg-emerald-800", "text-white", "shadow");
+                        btn.classList.add("text-slate-700", "hover:bg-white/70");
+                    }
+                });
+            }
+
+            const codeTableSummary = EXPENSE_ITEMS.map(
+                i => `- 부호 ${i.code} [${i.category} > ${i.name}]: ${i.description}`
+            ).join("\n");
+
+            const systemPrompt = `당신은 농가경제조사 '9. 농업지출' 항목 분류 전문가입니다.
+사용자가 입력한 농업 관련 상표명, 신제품명, 농자재, 농약, 비료, 사료, 기구 등을 구글 검색으로 찾아 어떤 용도의 제품인지 파악한 뒤, 아래 19개 부호 중 가장 정확한 부호를 배정하세요.
+
+[9. 농업지출 분류 기준표]
+${codeTableSummary}
+
+[중요 판별 기준 - 다용도 복합 자재 감지]
+- 만약 입력된 제품이 사용처(용도)에 따라 2가지 이상의 부호로 나뉠 수 있다면(예: 작물 재배·하우스용이면 '109 기타(재료비)', 수확물 출하·판매 포장용이면 '132 판매자재', 농작업 반복 도구면 '123 소농구구입비'), 반드시 "isMultiPurpose": true 로 설정하고 options 배열에 2~3개의 선택지를 제공하세요.
+- 반대로 농약(103), 비료(102), 사료(105), 종자(101)처럼 용도가 하나로 명확한 제품은 "isMultiPurpose": false 로 설정하세요.
+
+[응답 규칙]
+1. 반드시 아래 JSON 형식으로만 답변하고 다른 말은 덧붙이지 마세요.
+2. 어르신도 단번에 이해할 수 있도록 쉬운 한국어로 설명하세요.
+{
+  "isMultiPurpose": false,
+  "code": "101~132 중 가장 대표적인 3자리 숫자 문자열",
+  "productSummary": "이 제품이 무엇인지 한 줄 요약 (예: 원예용 살충제 농약 / 질소질 화학비료 등)",
+  "reason": "왜 이 부호에 해당하는지 쉬운 설명 (2~3문장)",
+  "multiPurposeGuide": "isMultiPurpose가 true일 때 사용자에게 묻는 안내 문구 (false면 빈 문자열)",
+  "options": [
+    {
+      "shortTag": "재배·생산용",
+      "label": "밭일·작물 재배·시설용으로 사용할 때",
+      "code": "109",
+      "reason": "쉬운 이유 설명"
+    },
+    {
+      "shortTag": "출하·판매용",
+      "label": "수확한 농산물을 담아 출하·판매할 때",
+      "code": "132",
+      "reason": "쉬운 이유 설명"
+    }
+  ]
+}`;
+
+            const userPrompt = `농업 지출 품목 또는 제품명: "${cleanQuery}"
+이 제품이 실제로 무엇인지 인터넷에서 검색하여 '9. 농업지출' 부호(101~132) 중 어디에 해당하는지, 그리고 사용처에 따라 부호가 달라지는 다용도 자재인지 판별해 주세요.`;
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                tools: [{ google_search: {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            try {
+                const response = await fetchWithBackoff(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                const candidate = data?.candidates?.[0];
+                const rawText = candidate?.content?.parts?.[0]?.text || "";
+
+                // 출처 링크 추출
+                let sources = [];
+                const attributions = candidate?.groundingMetadata?.groundingAttributions || [];
+                sources = attributions
+                    .map(a => ({ uri: a.web?.uri, title: a.web?.title }))
+                    .filter(s => s.uri && s.title);
+
+                // JSON 파싱
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("응답 형식을 해석하지 못했습니다.");
+                }
+
+                const parsed = JSON.parse(jsonMatch[0]);
+                const matchedItem = getItemByCode(parsed.code) || getItemByCode("130");
+                const validOptions = Array.isArray(parsed.options)
+                    ? parsed.options.filter(o => o && o.code && o.label && getItemByCode(o.code))
+                    : [];
+
+                aiSearchResult = {
+                    query: cleanQuery,
+                    isMultiPurpose: Boolean(parsed.isMultiPurpose) && validOptions.length >= 2,
+                    item: matchedItem,
+                    productSummary: parsed.productSummary || `${cleanQuery} 관련 농업용 품목`,
+                    reason: parsed.reason || matchedItem.description,
+                    multiPurposeGuide: parsed.multiPurposeGuide || "사용하시는 용도에 따라 부호가 달라집니다. 어디에 쓰셨나요?",
+                    options: validOptions,
+                    sources
+                };
+            } catch (error) {
+                aiSearchResult = {
+                    query: cleanQuery,
+                    error: true,
+                    errorMessage: "인터넷 검색 연결이 원활하지 않거나 제품 정보를 확인하지 못했습니다. 아래 포털 검색 버튼을 이용해 보세요."
+                };
+            } finally {
+                isAiLoading = false;
+                renderAll();
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 6. 화면 렌더링 (최상단 핵심 결론 카드 + 용도 선택 카드 + 하단 전체 리스트)
+         * ============================================================================
+         */
+        function renderConfirmedPurposeCard(choice, isFromAi = false) {
+            const item = getItemByCode(choice.code);
+            if (!item) return "";
+            const badgeClass = getCategoryBadgeStyle(item.category);
+
+            return `
+                <div class="bg-gradient-to-br from-emerald-50 via-white to-yellow-50 border-4 border-emerald-700 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-sm sm:text-base font-black px-3.5 py-1 rounded-full">
+                                ✔ 선택하신 용도로 확정된 부호
+                            </span>
+                            <span class="inline-block bg-amber-300 text-slate-950 text-sm sm:text-base font-black px-3 py-0.5 rounded-full">
+                                용도: ${escapeHtml(choice.shortTag)}
+                            </span>
+                        </div>
+                        <button 
+                            type="button" 
+                            onclick="resetPurposeChoice()"
+                            class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-sm sm:text-base rounded-xl cursor-pointer"
+                        >
+                            ↺ 다른 용도로 다시 선택
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 shadow-xs">
+                        <div class="flex items-center gap-4">
+                            <div class="flex flex-col items-center justify-center bg-emerald-900 text-white rounded-2xl px-5 py-3.5 min-w-[100px] sm:min-w-[116px] shadow">
+                                <span class="text-xs sm:text-sm font-bold text-emerald-200 mb-1">확정 부호</span>
+                                <span class="text-3xl sm:text-5xl font-black tracking-tight leading-none text-yellow-300">
+                                    ${item.code}
+                                </span>
+                            </div>
+
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <span class="text-sm sm:text-base font-black px-3 py-0.5 rounded-lg border ${badgeClass}">
+                                        ${item.category}
+                                    </span>
+                                    <span class="text-sm sm:text-base font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-lg">
+                                        단위: <strong class="text-slate-900">${item.unit}</strong>
+                                    </span>
+                                </div>
+                                <h2 class="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight">
+                                    ${item.name}
+                                </h2>
+                                <p class="text-base sm:text-lg font-extrabold text-emerald-800 mt-1">
+                                    품목: ${escapeHtml(choice.query)} (${escapeHtml(choice.shortTag)})
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex sm:flex-col gap-2 shrink-0">
+                            <button 
+                                type="button" 
+                                onclick="copyItemInfo('${item.code}', '${item.name}')"
+                                class="flex-1 px-4 py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-black text-base rounded-xl shadow cursor-pointer"
+                            >
+                                부호 복사
+                            </button>
+                            <button 
+                                type="button" 
+                                onclick="savePurposeChoiceToNotebook()"
+                                class="flex-1 px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base rounded-xl shadow cursor-pointer"
+                            >
+                                📒 용도 포함 수첩 저장
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-900/5 rounded-2xl p-4 sm:p-5 border border-emerald-200">
+                        <p class="text-base sm:text-xl text-slate-900 font-bold leading-relaxed">
+                            💡 ${escapeHtml(choice.reason)}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMultiPurposeQuestionCard({ title, query, guide, options, isAi = false, ruleId = "" }) {
+            const buttonsHtml = options.map((opt, idx) => {
+                const targetItem = getItemByCode(opt.code);
+                if (!targetItem) return "";
+                const clickHandler = isAi
+                    ? `selectAiPurposeOption(${idx})`
+                    : `selectLocalPurposeOption('${escapeHtml(ruleId)}', ${idx})`;
+
+                const isSales = opt.code === "132";
+                const btnBorder = isSales
+                    ? "border-blue-300 hover:border-blue-600 bg-blue-50/70 hover:bg-blue-100/80"
+                    : "border-emerald-300 hover:border-emerald-600 bg-emerald-50/70 hover:bg-emerald-100/80";
+                const badgeBg = isSales ? "bg-blue-800 text-white" : "bg-emerald-800 text-white";
+
+                return `
+                    <button 
+                        type="button" 
+                        onclick="${clickHandler}"
+                        class="w-full text-left p-4 sm:p-5 rounded-2xl border-3 border-2 ${btnBorder} transition shadow-xs hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    >
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl" aria-hidden="true">${opt.icon || (isSales ? "📦" : "🌱")}</span>
+                                <span class="text-lg sm:text-xl font-black text-slate-950">
+                                    ${escapeHtml(opt.label)}
+                                </span>
+                            </div>
+                            <p class="text-sm sm:text-base text-slate-700 font-medium pl-8">
+                                ${escapeHtml(opt.reason)}
+                            </p>
+                        </div>
+                        <div class="shrink-0 self-end sm:self-center">
+                            <span class="inline-flex items-center gap-1.5 ${badgeBg} px-4 py-2.5 rounded-xl font-black text-base sm:text-lg shadow">
+                                <span>→ 부호 ${targetItem.code} ${targetItem.name}</span>
+                            </span>
+                        </div>
+                    </button>
+                `;
+            }).join("");
+
+            return `
+                <div class="bg-amber-50 border-4 border-amber-500 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="inline-flex items-center gap-1.5 bg-amber-500 text-slate-950 text-sm sm:text-base font-black px-3.5 py-1 rounded-full">
+                            ⚠️ 용도에 따라 부호가 달라집니다! 어디에 쓰셨나요?
+                        </span>
+                        <span class="text-sm sm:text-base font-extrabold text-amber-950">
+                            검색어: "${escapeHtml(query)}" (${escapeHtml(title)})
+                        </span>
+                    </div>
+
+                    <p class="text-base sm:text-xl font-extrabold text-slate-900 leading-relaxed">
+                        ${escapeHtml(guide)} 아래에서 <strong>실제 사용하신 용도</strong>를 눌러주세요.
+                    </p>
+
+                    <div class="space-y-3 pt-1">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTopConclusion(localMatches = []) {
+            const trimmedQuery = currentQuery.trim();
+
+            // 1) 인터넷·AI 검색 로딩 중일 때
+            if (isAiLoading) {
+                topConclusionSection.classList.remove("hidden");
+                topConclusionSection.innerHTML = `
+                    <div class="bg-amber-50 border-4 border-amber-400 rounded-3xl p-6 sm:p-8 shadow-lg text-center space-y-3">
+                        <div class="inline-block w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin-fast"></div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900">
+                            인터넷에서 "${escapeHtml(trimmedQuery)}" 제품 정보를 찾고 있습니다...
+                        </h2>
+                        <p class="text-base sm:text-lg text-slate-700 font-medium">
+                            신제품 상표명과 성분을 확인하여 101~132번 부호 중 어디에 해당하는지 판별 중입니다.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 2) 사용자가 용도 선택 카드에서 이미 용도를 클릭해 확정한 상태일 때
+            if (selectedPurposeChoice && selectedPurposeChoice.query === trimmedQuery) {
+                topConclusionSection.classList.remove("hidden");
+                topConclusionSection.innerHTML = renderConfirmedPurposeCard(
+                    selectedPurposeChoice,
+                    Boolean(aiSearchResult && aiSearchResult.query === trimmedQuery)
+                );
+                return;
+            }
+
+            // 3) 인터넷·AI 판별 결과가 있을 때
+            if (aiSearchResult && aiSearchResult.query === trimmedQuery) {
+                topConclusionSection.classList.remove("hidden");
+
+                if (aiSearchResult.error) {
+                    topConclusionSection.innerHTML = `
+                        <div class="bg-rose-50 border-2 border-rose-300 rounded-3xl p-5 sm:p-6 shadow-md space-y-3">
+                            <div class="flex items-center gap-2 text-rose-800 font-black text-lg sm:text-xl">
+                                <span>⚠️ 인터넷 자동 판별 안내</span>
+                            </div>
+                            <p class="text-base sm:text-lg text-slate-800 leading-relaxed">
+                                ${escapeHtml(aiSearchResult.errorMessage)}
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                                <a href="https://search.naver.com/search.naver?query=${encodeURIComponent(trimmedQuery + ' 농자재')}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm sm:text-base rounded-xl">
+                                    N 네이버에서 "${escapeHtml(trimmedQuery)}" 검색 ↗
+                                </a>
+                                <a href="https://search.daum.net/search?q=${encodeURIComponent(trimmedQuery + ' 농자재')}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm sm:text-base rounded-xl">
+                                    D 다음에서 "${escapeHtml(trimmedQuery)}" 검색 ↗
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // AI가 다용도 복합 자재라고 판별한 경우 -> 용도 선택 카드 표시
+                if (aiSearchResult.isMultiPurpose && aiSearchResult.options.length >= 2) {
+                    topConclusionSection.innerHTML = renderMultiPurposeQuestionCard({
+                        title: aiSearchResult.productSummary,
+                        query: aiSearchResult.query,
+                        guide: aiSearchResult.multiPurposeGuide,
+                        options: aiSearchResult.options,
+                        isAi: true
+                    });
+                    return;
+                }
+
+                const item = aiSearchResult.item;
+                const badgeClass = getCategoryBadgeStyle(item.category);
+                const sourcesHtml = aiSearchResult.sources && aiSearchResult.sources.length > 0
+                    ? `<div class="mt-3 pt-3 border-t border-emerald-200/80 text-xs sm:text-sm text-slate-600">
+                        <span class="font-bold text-slate-700 mr-1.5">참고 검색 출처:</span>
+                        ${aiSearchResult.sources.slice(0, 3).map(s => `
+                            <a href="${escapeHtml(s.uri)}" target="_blank" rel="noopener noreferrer" class="inline-block underline text-emerald-800 hover:text-emerald-950 mr-3">
+                                ${escapeHtml(s.title)} ↗
+                            </a>
+                        `).join("")}
+                       </div>`
+                    : "";
+
+                topConclusionSection.innerHTML = `
+                    <div class="bg-gradient-to-br from-emerald-50 via-white to-amber-50 border-4 border-emerald-700 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-sm sm:text-base font-black px-3.5 py-1 rounded-full shadow-2xs">
+                                🌐 인터넷·AI 실시간 판별 결론
+                            </span>
+                            <span class="text-sm sm:text-base font-extrabold text-emerald-900">
+                                검색어: "${escapeHtml(aiSearchResult.query)}"
+                            </span>
+                        </div>
+
+                        <!-- 핵심 결론 박스 -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 shadow-xs">
+                            <div class="flex items-center gap-4">
+                                <div class="flex flex-col items-center justify-center bg-emerald-900 text-white rounded-2xl px-5 py-3.5 min-w-[100px] sm:min-w-[116px] shadow">
+                                    <span class="text-xs sm:text-sm font-bold text-emerald-200 mb-1">부호 번호</span>
+                                    <span class="text-3xl sm:text-5xl font-black tracking-tight leading-none text-yellow-300">
+                                        ${item.code}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                        <span class="text-sm sm:text-base font-black px-3 py-0.5 rounded-lg border ${badgeClass}">
+                                            ${item.category}
+                                        </span>
+                                        <span class="text-sm sm:text-base font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-lg">
+                                            단위: <strong class="text-slate-900">${item.unit}</strong>
+                                        </span>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight">
+                                        ${item.name}
+                                    </h2>
+                                    <p class="text-base sm:text-lg font-extrabold text-emerald-800 mt-1">
+                                        → ${escapeHtml(aiSearchResult.productSummary)}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- 액션 버튼들 -->
+                            <div class="flex sm:flex-col gap-2 shrink-0">
+                                <button 
+                                    type="button" 
+                                    onclick="copyItemInfo('${item.code}', '${item.name}')"
+                                    class="flex-1 px-4 py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-black text-base rounded-xl shadow cursor-pointer"
+                                >
+                                    부호 복사
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onclick="saveCurrentAiResult()"
+                                    class="flex-1 px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base rounded-xl shadow cursor-pointer"
+                                >
+                                    📒 수첩에 저장
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 쉬운 이유 설명 -->
+                        <div class="bg-emerald-900/5 rounded-2xl p-4 sm:p-5 border border-emerald-200">
+                            <p class="text-sm font-black text-emerald-900 mb-1">💡 왜 이 항목에 해당하나요?</p>
+                            <p class="text-base sm:text-xl text-slate-900 font-bold leading-relaxed">
+                                ${escapeHtml(aiSearchResult.reason)}
+                            </p>
+                            ${sourcesHtml}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 4) 다용도 복합 품목(톤백, 멀칭비닐, 끈, 콘티박스 등)에 해당할 때 -> 용도 선택 질문 카드 최우선 표시
+            const multiRule = findMultiPurposeRule(trimmedQuery);
+            if (multiRule) {
+                topConclusionSection.classList.remove("hidden");
+                topConclusionSection.innerHTML = renderMultiPurposeQuestionCard({
+                    title: multiRule.title,
+                    query: trimmedQuery,
+                    guide: multiRule.guide,
+                    options: multiRule.options,
+                    isAi: false,
+                    ruleId: multiRule.id
+                });
+                return;
+            }
+
+            // 5) 로컬 사전 / 내 제품 수첩에서 단일 항목이 명확히 일치했을 때
+            if (trimmedQuery.length > 0 && localMatches.length > 0) {
+                const top = localMatches[0];
+                const item = top.item;
+                const badgeClass = getCategoryBadgeStyle(item.category);
+                const reasonText = top.matchedReasons.length > 0
+                    ? `입력하신 '${trimmedQuery}'은(는) [${top.matchedReasons.slice(0, 3).join(", ")}] 품목으로, '${item.name}(부호 ${item.code})'에 해당합니다.`
+                    : `'${item.description}' 기준에 따라 '${item.name}(부호 ${item.code})'에 해당합니다.`;
+
+                topConclusionSection.classList.remove("hidden");
+                topConclusionSection.innerHTML = `
+                    <div class="bg-white border-4 border-emerald-700 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 bg-emerald-800 text-white text-sm sm:text-base font-black px-3.5 py-1 rounded-full">
+                                ★ 가장 정확한 분류 결과
+                            </span>
+                            <button 
+                                type="button" 
+                                onclick="runInternetAiSearch('${escapeHtml(trimmedQuery)}')"
+                                class="text-sm sm:text-base font-extrabold text-amber-800 hover:text-amber-950 underline decoration-amber-400 decoration-2 cursor-pointer"
+                            >
+                                혹시 다른 뜻의 신제품인가요? 인터넷·AI로 다시 판별하기 →
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="flex flex-col items-center justify-center bg-emerald-900 text-white rounded-2xl px-5 py-3.5 min-w-[100px] sm:min-w-[116px] shadow">
+                                    <span class="text-xs sm:text-sm font-bold text-emerald-200 mb-1">부호</span>
+                                    <span class="text-3xl sm:text-5xl font-black tracking-tight leading-none text-yellow-300">
+                                        ${item.code}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                        <span class="text-sm sm:text-base font-black px-3 py-0.5 rounded-lg border ${badgeClass}">
+                                            ${item.category}
+                                        </span>
+                                        <span class="text-sm sm:text-base font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-lg">
+                                            단위: <strong class="text-slate-900">${item.unit}</strong>
+                                        </span>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight">
+                                        ${item.name}
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <div class="flex sm:flex-col gap-2 shrink-0">
+                                <button 
+                                    type="button" 
+                                    onclick="copyItemInfo('${item.code}', '${item.name}')"
+                                    class="flex-1 px-4 py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-black text-base rounded-xl shadow cursor-pointer"
+                                >
+                                    부호 복사
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onclick="quickSaveCurrentQuery('${item.code}')"
+                                    class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-amber-100 text-slate-800 hover:text-amber-950 border border-slate-300 font-bold text-sm sm:text-base rounded-xl cursor-pointer"
+                                >
+                                    📒 수첩에 기억시키기
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200">
+                            <p class="text-base sm:text-lg text-slate-900 font-bold leading-relaxed">
+                                💡 ${highlightText(reasonText, trimmedQuery)}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 검색어가 없거나 로컬 일치가 없으면 상단 결론 숨김
+            topConclusionSection.classList.add("hidden");
+            topConclusionSection.innerHTML = "";
+        }
+
+        function saveCurrentAiResult() {
+            if (!aiSearchResult || aiSearchResult.error) return;
+            saveProductToNotebook(
+                aiSearchResult.query,
+                aiSearchResult.item.code,
+                aiSearchResult.productSummary,
+                "인터넷·AI 판별"
+            );
+            renderAll();
+        }
+
+        function quickSaveCurrentQuery(code) {
+            const q = currentQuery.trim();
+            if (!q) return;
+            saveProductToNotebook(q, code, "자주 쓰는 품목 저장", "직접저장");
+            renderAll();
+        }
+
+        function renderAll() {
+            const trimmedQuery = currentQuery.trim();
+            const localMatches = searchLocalDatabase(trimmedQuery);
+
+            // 지우기 버튼 노출
+            if (trimmedQuery.length > 0) {
+                clearBtn.classList.remove("hidden");
+            } else {
+                clearBtn.classList.add("hidden");
+            }
+
+            // 외부 검색 링크 동적 업데이트
+            extNaverLink.href = `https://search.naver.com/search.naver?query=${encodeURIComponent((trimmedQuery || "농업자재") + " 용도")}`;
+            extDaumLink.href = `https://search.daum.net/search?q=${encodeURIComponent((trimmedQuery || "농업자재") + " 용도")}`;
+
+            // 최상단 결론 카드 렌더링
+            renderTopConclusion(localMatches);
+
+            // 결과 요약 문구 업데이트
+            if (trimmedQuery) {
+                resultSummary.innerHTML = `'${escapeHtml(trimmedQuery)}' 관련 기준표 항목: <span class="text-emerald-800 font-black text-xl">${localMatches.length}</span>건`;
+            } else {
+                resultSummary.innerHTML = `${currentCategory} 전체 기준표 <span class="text-emerald-800 font-black text-xl">${localMatches.length}</span>건`;
+            }
+
+            // 로컬 매칭 결과가 없고 AI 결과도 없을 때 안내 박스 표시
+            if (localMatches.length === 0 && !aiSearchResult && !isAiLoading) {
+                resultsContainer.innerHTML = "";
+                emptyQueryLabel.textContent = `"${trimmedQuery}"`;
+                emptyState.classList.remove("hidden");
+                return;
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            // 하단 기준표 카드 리스트 렌더링
+            resultsContainer.innerHTML = localMatches.map(({ item, matchedReasons }) => {
+                const badgeClass = getCategoryBadgeStyle(item.category);
+
+                // 매칭된 대표 상표명/연관어 표시
+                const matchedTagsHtml = (trimmedQuery && matchedReasons.length > 0)
+                    ? `<div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
+                        <span class="text-sm font-extrabold text-emerald-800 mr-1">일치 상표·품목:</span>
+                        ${matchedReasons.slice(0, 6).map(tag => `
+                            <span class="inline-block bg-yellow-100 text-slate-900 border border-yellow-300 text-sm font-bold px-2.5 py-0.5 rounded-lg">
+                                ${highlightText(tag, trimmedQuery)}
+                            </span>
+                        `).join("")}
+                       </div>`
+                    : `<div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
+                        <span class="text-xs sm:text-sm font-bold text-slate-500 mr-1">대표 품목·상표:</span>
+                        ${item.synonyms.slice(0, 6).map(tag => `
+                            <span class="inline-block bg-slate-100 text-slate-700 text-xs sm:text-sm font-medium px-2 py-0.5 rounded-md">
+                                ${escapeHtml(tag)}
+                            </span>
+                        `).join("")}
+                       </div>`;
+
+                return `
+                    <article class="card-transition bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <div class="flex flex-col items-center justify-center bg-emerald-800 text-white rounded-2xl px-4 py-2.5 min-w-[82px] sm:min-w-[92px]">
+                                    <span class="text-xs font-bold text-emerald-200 leading-none mb-1">부호</span>
+                                    <span class="text-2xl sm:text-3xl font-black leading-none">
+                                        ${highlightText(item.code, trimmedQuery)}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                                        <span class="text-xs sm:text-sm font-extrabold px-2.5 py-0.5 rounded-lg border ${badgeClass}">
+                                            ${item.category}
+                                        </span>
+                                        <span class="text-xs sm:text-sm font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-lg">
+                                            단위: <strong class="text-slate-800">${item.unit}</strong>
+                                        </span>
+                                    </div>
+                                    <h3 class="text-xl sm:text-2xl font-black text-slate-900">
+                                        ${highlightText(item.name, trimmedQuery)}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <button 
+                                type="button" 
+                                onclick="copyItemInfo('${item.code}', '${item.name}')"
+                                class="px-3.5 py-2 bg-slate-100 hover:bg-emerald-50 active:bg-emerald-100 text-slate-700 hover:text-emerald-900 border border-slate-300 rounded-xl text-sm font-bold transition cursor-pointer shrink-0"
+                            >
+                                부호 복사
+                            </button>
+                        </div>
+
+                        <div class="mt-3.5 bg-slate-50 rounded-xl p-3.5 sm:p-4 border border-slate-200/80">
+                            <p class="text-base sm:text-lg text-slate-800 leading-relaxed font-medium">
+                                ${highlightText(item.description, trimmedQuery)}
+                            </p>
+                        </div>
+
+                        ${matchedTagsHtml}
+                    </article>
+                `;
+            }).join("");
+        }
+
+        /**
+         * ============================================================================
+         * 7. 초기화 및 이벤트 바인딩
+         * ============================================================================
+         */
+        function initQuickKeywords() {
+            quickKeywordsContainer.innerHTML = QUICK_KEYWORDS.map(item => {
+                const btnStyle = item.multi
+                    ? "bg-amber-50 hover:bg-amber-400 hover:text-slate-950 active:bg-amber-500 text-amber-950 border-2 border-amber-400"
+                    : "bg-emerald-50 hover:bg-emerald-700 hover:text-white active:bg-emerald-800 text-emerald-950 border border-emerald-200";
+                const badge = item.multi
+                    ? `<span class="text-xs font-black bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-md ml-1">용도구분</span>`
+                    : "";
+
+                return `
+                    <button 
+                        type="button" 
+                        data-keyword="${item.text}"
+                        class="quick-btn px-3.5 py-2 ${btnStyle} rounded-xl text-base sm:text-lg font-extrabold transition cursor-pointer inline-flex items-center"
+                    >
+                        <span>${item.text}</span>${badge}
+                    </button>
+                `;
+            }).join("");
+
+            document.querySelectorAll(".quick-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const kw = btn.getAttribute("data-keyword");
+                    searchInput.value = kw;
+                    currentQuery = kw;
+                    aiSearchResult = null;
+                    selectedPurposeChoice = null;
+                    if (currentCategory !== "전체") {
+                        setActiveCategory("전체");
+                    } else {
+                        renderAll();
+                    }
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+            });
+        }
+
+        function initManualSelectOptions() {
+            manualProdCode.innerHTML = EXPENSE_ITEMS.map(item => `
+                <option value="${item.code}">부호 ${item.code} - ${item.name} (${item.category})</option>
+            `).join("");
+        }
+
+        function setActiveCategory(category) {
+            currentCategory = category;
+            tabButtons.forEach(btn => {
+                if (btn.getAttribute("data-category") === category) {
+                    btn.classList.add("bg-emerald-800", "text-white", "shadow");
+                    btn.classList.remove("text-slate-700", "hover:bg-white/70");
+                } else {
+                    btn.classList.remove("bg-emerald-800", "text-white", "shadow");
+                    btn.classList.add("text-slate-700", "hover:bg-white/70");
+                }
+            });
+            renderAll();
+        }
+
+        // 입력창 실시간 검색
+        searchInput.addEventListener("input", (e) => {
+            currentQuery = e.target.value;
+            // 검색어가 바뀌면 이전 AI 검색 결과 및 용도 선택 상태 초기화
+            if (aiSearchResult && aiSearchResult.query !== currentQuery.trim()) {
+                aiSearchResult = null;
+            }
+            if (selectedPurposeChoice && selectedPurposeChoice.query !== currentQuery.trim()) {
+                selectedPurposeChoice = null;
+            }
+            renderAll();
+        });
+
+        // 엔터키 누를 때 로컬 사전에 없으면 자동으로 인터넷·AI 판별 실행
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const trimmed = currentQuery.trim();
+                if (!trimmed) return;
+                const localHits = searchLocalDatabase(trimmed);
+                if (localHits.length === 0) {
+                    runInternetAiSearch(trimmed);
+                }
+            }
+        });
+
+        // 인터넷·AI 판별 버튼 클릭
+        aiSearchBtn.addEventListener("click", () => runInternetAiSearch(currentQuery));
+        emptyAiSearchBtn.addEventListener("click", () => runInternetAiSearch(currentQuery));
+
+        // 검색어 지우기
+        clearBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            currentQuery = "";
+            aiSearchResult = null;
+            selectedPurposeChoice = null;
+            renderAll();
+            searchInput.focus();
+        });
+
+        // 전체 초기화
+        resetAllBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            currentQuery = "";
+            aiSearchResult = null;
+            selectedPurposeChoice = null;
+            setActiveCategory("전체");
+            searchInput.focus();
+        });
+
+        // 대분류 탭 클릭
+        tabButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                setActiveCategory(btn.getAttribute("data-category"));
+            });
+        });
+
+        // 수첩 모달 열기/닫기
+        openNotebookBtn.addEventListener("click", () => {
+            renderCustomProductList();
+            notebookModal.classList.remove("hidden");
+        });
+
+        closeNotebookBtn.addEventListener("click", () => {
+            notebookModal.classList.add("hidden");
+        });
+
+        notebookModal.addEventListener("click", (e) => {
+            if (e.target === notebookModal) {
+                notebookModal.classList.add("hidden");
+            }
+        });
+
+        // 수동 제품 등록
+        addManualProdBtn.addEventListener("click", () => {
+            const success = saveProductToNotebook(
+                manualProdName.value,
+                manualProdCode.value,
+                manualProdNote.value,
+                "직접등록"
+            );
+            if (success) {
+                manualProdName.value = "";
+                manualProdNote.value = "";
+                renderAll();
+            }
+        });
+
+        // 백업 내보내기 (JSON)
+        exportDataBtn.addEventListener("click", () => {
+            if (customProducts.length === 0) {
+                showToast("내보낼 저장 목록이 없습니다.");
+                return;
+            }
+            const blob = new Blob([JSON.stringify(customProducts, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `내제품수첩_백업_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("백업 파일이 다운로드되었습니다.");
+        });
+
+        // 백업 불러오기 (JSON)
+        importDataInput.addEventListener("change", (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const imported = JSON.parse(ev.target.result);
+                    if (!Array.isArray(imported)) throw new Error();
+                    imported.forEach(item => {
+                        if (item.productName && item.code) {
+                            saveProductToNotebook(item.productName, item.code, item.note || "", item.source || "불러오기");
+                        }
+                    });
+                    renderAll();
+                    showToast("백업 목록을 성공적으로 불러왔습니다.");
+                } catch (err) {
+                    showToast("올바른 백업 파일이 아닙니다.");
+                }
+                importDataInput.value = "";
+            };
+            reader.readAsText(file);
+        });
+
+        // 앱 시작
+        window.addEventListener("DOMContentLoaded", () => {
+            loadCustomProducts();
+            initQuickKeywords();
+            initManualSelectOptions();
+            renderAll();
+        });
+    </script>
+</body>
+</html>
